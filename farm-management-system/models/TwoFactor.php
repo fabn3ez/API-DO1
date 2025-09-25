@@ -1,71 +1,43 @@
 <?php
+// models/TwoFactor.php
 class TwoFactor {
     private $conn;
-    private $table = "two_factor_auth";
-    
-    public $two_factor_id;
-    public $user_id;
-    public $method;
-    public $secret_key;
-    public $phone_number;
-    public $backup_codes;
-    public $is_enabled;
-    
-    public function __construct($db) {
-        $this->conn = $db;
-    }
-    
-    public function create() {
-        $query = "INSERT INTO " . $this->table . " 
-                 SET user_id=:user_id, method=:method, phone_number=:phone_number, 
-                     backup_codes=:backup_codes";
-        
-        $stmt = $this->conn->prepare($query);
-        
-        $backup_codes_json = json_encode($this->backup_codes);
-        
-        $stmt->bindParam(":user_id", $this->user_id);
-        $stmt->bindParam(":method", $this->method);
-        $stmt->bindParam(":phone_number", $this->phone_number);
-        $stmt->bindParam(":backup_codes", $backup_codes_json);
-        
-        return $stmt->execute();
-    }
-    
+    private $table = 'two_factor_auth';
+
+    public function __construct(PDO $db) { $this->conn = $db; }
+
     public function findByUserId($user_id) {
-        $query = "SELECT * FROM " . $this->table . " WHERE user_id = :user_id LIMIT 1";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":user_id", $user_id);
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $sql = "SELECT * FROM {$this->table} WHERE user_id = :user_id LIMIT 1";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':user_id' => $user_id]);
+        return $stmt->fetch();
     }
-    
-    public function update($user_id) {
-        $query = "UPDATE " . $this->table . " 
-                 SET method=:method, phone_number=:phone_number, is_enabled=:is_enabled 
-                 WHERE user_id = :user_id";
-        
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":method", $this->method);
-        $stmt->bindParam(":phone_number", $this->phone_number);
-        $stmt->bindParam(":is_enabled", $this->is_enabled);
-        $stmt->bindParam(":user_id", $user_id);
-        
-        return $stmt->execute();
+
+    public function createForUser($user_id, $method = 'email', $phone = null, array $codes = []) {
+        $sql = "INSERT INTO {$this->table} (user_id, method, phone_number, backup_codes, is_enabled) VALUES (:user_id, :method, :phone, :codes, 0)";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            ':user_id' => $user_id,
+            ':method' => $method,
+            ':phone' => $phone,
+            ':codes' => json_encode($codes)
+        ]);
     }
-    
-    public function enable2FA($user_id) {
-        $query = "UPDATE " . $this->table . " SET is_enabled = true WHERE user_id = :user_id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":user_id", $user_id);
-        return $stmt->execute();
+
+    public function enable($user_id, $method='email', $phone = null) {
+        // create record if missing
+        $exists = $this->findByUserId($user_id);
+        if (!$exists) {
+            return $this->createForUser($user_id, $method, $phone, []);
+        }
+        $sql = "UPDATE {$this->table} SET method = :method, phone_number = :phone, is_enabled = 1 WHERE user_id = :user_id";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([':method'=>$method, ':phone'=>$phone, ':user_id'=>$user_id]);
     }
-    
-    public function disable2FA($user_id) {
-        $query = "UPDATE " . $this->table . " SET is_enabled = false WHERE user_id = :user_id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":user_id", $user_id);
-        return $stmt->execute();
+
+    public function updateBackupCodes($user_id, array $codes) {
+        $sql = "UPDATE {$this->table} SET backup_codes = :codes WHERE user_id = :user_id";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([':codes' => json_encode($codes), ':user_id' => $user_id]);
     }
 }
-?>
