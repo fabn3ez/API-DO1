@@ -1,0 +1,11 @@
+[user]
+	name = Obiero-Samuel
+	email = obiero.odhiambo@strathmore.edu
+[http]
+	postBuffer = 157286400
+	maxRequestBuffer = 100M
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f

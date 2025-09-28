@@ -1,0 +1,3 @@
+2024-08-10 17:00:25 [Thread-0] INFO  o.s.core.KotlinDetector - Kotlin reflection implementation not found at runtime, related features won't be available. 
+2024-08-10 17:00:26 [Thread-0] INFO  o.s.c.a.ConfigurationClassParser - Properties location [file:${user.home}/unicentaopos.properties] not resolvable: C:\Users\samob\unicentaopos.properties (The system cannot find the file specified) 
+2024-08-10 17:52:07 [AWT-EventQueue-0] INFO  org.reflections.Reflections - Reflections took 107 ms to scan 3 urls, producing 163 keys and 357 values  

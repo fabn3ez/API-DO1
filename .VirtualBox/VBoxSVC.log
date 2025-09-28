@@ -1,0 +1,496 @@
+00:00:00.007898 main     VirtualBox COM Server 7.1.4 r165100 win.amd64 (Oct 10 2024 18:57:17) release log
+00:00:00.007906 main     Log opened 2025-09-25T05:40:32.215982400Z
+00:00:00.007908 main     Build Type: release
+00:00:00.007922 main     OS Product: Windows 11
+00:00:00.007924 main     OS Release: 10.0.26120
+00:00:00.007925 main     OS Service Pack: 
+00:00:00.076917 main     DMI Product Name: HP 245 14 inch G10 Notebook PC
+00:00:00.107849 main     DMI Product Version: Type1ProductConfigId
+00:00:00.107864 main     Firmware type: UEFI
+00:00:00.108985 main     Secure Boot: Enabled
+00:00:00.109018 main     Host RAM: 15723MB (15.3GB) total, 2831MB (2.7GB) available
+00:00:00.109031 main     Executable: C:\Program Files\Oracle\VirtualBox\VBoxSVC.exe
+00:00:00.109032 main     Process ID: 28320
+00:00:00.109033 main     Package type: WINDOWS_64BITS_GENERIC
+00:00:00.109040 main     Windows Features:
+00:00:00.109041 main       Core Isolation (Memory Integrity): ENABLED
+00:00:00.318337          VirtualBox: object creation starts
+00:00:00.318868          Home directory: 'C:\Users\samob\.VirtualBox'
+00:00:00.319127          Installed Drivers:
+00:00:00.382977          Loading settings file "C:\Users\samob\.VirtualBox\VirtualBox.xml" with version "1.12-windows"
+00:00:00.398396          usbLibGetDevices: Starting USB device enumeration
+00:00:00.398762          Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 3
+00:00:00.398917          Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+00:00:00.399187          Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&1bf845b2&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+00:00:00.404080          usbLibGetDevices: Found 3 USB devices, 0 captured
+00:00:00.404171          USB: Unknown USB device detected (idVendor: 0x04f2, idProduct: 0xb78f)
+00:00:00.404241          USB: Unknown USB device detected (idVendor: 0x06cb, idProduct: 0x0169)
+00:00:00.405825          USB: Unknown USB device detected (idVendor: 0x0bda, idProduct: 0xb85c)
+00:00:00.611123          HostDnsMonitor: initializing
+00:00:00.631159          HostDnsMonitor: updating information
+00:00:00.631237          HostDnsMonitor: old information
+00:00:00.631238            no server entries
+00:00:00.631239            no domain set
+00:00:00.631240            no search string entries
+00:00:00.631241          HostDnsMonitor: new information
+00:00:00.631241            server 1: 192.168.170.52
+00:00:00.631242            server 2: 192.168.170.51
+00:00:00.631244            server 3: 192.168.170.20
+00:00:00.631244            server 4: 192.168.170.19
+00:00:00.631245            server 5: 192.168.170.35
+00:00:00.631245            server 6: 192.168.170.38
+00:00:00.631246            domain: strathmore.local
+00:00:00.631246            no search string entries
+00:00:00.636019          VD: VDInit finished with VINF_SUCCESS
+00:00:00.638723          Platform architecture set to 'x86'
+00:00:00.667337          Loading settings file "C:\Users\samob\Downloads\kali-linux-2024.4-virtualbox-amd64\kali-linux-2024.4-virtualbox-amd64\kali-linux-2024.4-virtualbox-amd64-1.16.vbox" with version "1.19-windows"
+00:00:00.667864          Platform architecture set to 'x86'
+00:00:00.668300          Platform architecture set to 'x86'
+00:00:00.689808          Loading settings file "C:\Users\samob\VirtualBox VMs\Victim-VM\Victim-VM.vbox" with version "1.19-windows"
+00:00:00.690167          Platform architecture set to 'x86'
+00:00:00.690558          Platform architecture set to 'x86'
+00:00:00.714881          Loading settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox" with version "1.19-windows"
+00:00:00.717068          Platform architecture set to 'x86'
+00:00:00.718298          VirtualBox: object created
+00:00:01.274761          Saving settings file "C:\Users\samob\.VirtualBox\VirtualBox.xml" with version "1.12-windows"
+00:00:01.284363          Finished saving settings file "C:\Users\samob\.VirtualBox\VirtualBox.xml"
+00:00:01.284862          Saving settings file "C:\Users\samob\.VirtualBox\VirtualBox.xml" with version "1.12-windows"
+00:00:01.289527          Finished saving settings file "C:\Users\samob\.VirtualBox\VirtualBox.xml"
+00:00:01.289924          Saving settings file "C:\Users\samob\.VirtualBox\VirtualBox.xml" with version "1.12-windows"
+00:00:01.296105          Finished saving settings file "C:\Users\samob\.VirtualBox\VirtualBox.xml"
+00:00:03.435775          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:00:03.685397          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is PoweredOff)}, preserve=false aResultDetail=0
+00:00:12.446136          Launched VM: 2279729744 pid: 24864 (0x6120) frontend: GUI/Qt name: Attacker-VM
+00:00:12.529519          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:00:12.576259          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is PoweredOff)}, preserve=false aResultDetail=0
+00:00:19.831742          Platform architecture set to 'x86'
+00:00:19.987186          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:00:19.994874          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is PoweredOff)}, preserve=false aResultDetail=0
+00:00:21.077081          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={70401eef-c8e9-466b-9660-45cb3e9979e4} aComponent={ExtPackManagerWrap} aText={No extension pack by the name 'Oracle VirtualBox Extension Pack' was found}, preserve=false aResultDetail=0
+00:00:23.707659          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={SessionMachine} aText={The machine is not mutable or saved (state is Starting)}, preserve=false aResultDetail=0
+00:00:23.712304          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:00:23.761021          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is Starting)}, preserve=false aResultDetail=0
+00:00:25.634568          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={7d510820-a678-4730-a862-818dcd3fbed0} aComponent={MediumWrap} aText={Property 'CRYPT/KeyId' does not exist}, preserve=false aResultDetail=0
+00:00:25.635305          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={7d510820-a678-4730-a862-818dcd3fbed0} aComponent={MediumWrap} aText={Property 'CRYPT/KeyId' does not exist}, preserve=false aResultDetail=0
+00:00:25.636234          HostDnsMonitorProxy::GetDomainName: strathmore.local
+00:00:25.636336          HostDnsMonitorProxy::GetNameServers:
+00:00:25.636352            name server 1: 192.168.170.52
+00:00:25.636361            name server 2: 192.168.170.51
+00:00:25.636370            name server 3: 192.168.170.20
+00:00:25.636377            name server 4: 192.168.170.19
+00:00:25.636385            name server 5: 192.168.170.35
+00:00:25.636401            name server 6: 192.168.170.38
+00:00:25.636494          HostDnsMonitorProxy::GetSearchStrings:
+00:00:25.636510            no search string entries
+00:00:25.802186          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:00:25.847779          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is Running)}, preserve=false aResultDetail=0
+00:11:43.037922 dns-monitor HostDnsMonitor: updating information
+00:11:43.037966 dns-monitor HostDnsMonitor: unchanged
+00:20:25.165901          ERROR [COM]: aRC=E_FAIL (0x80004005) aIID={bea3ef5c-de2f-4b74-aa3a-15d6249371a0} aComponent={RecordingSettingsWrap} aText={Recording not started}, preserve=false aResultDetail=0
+00:20:25.335029          Saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox" with version "1.19-windows"
+00:20:25.343332          Finished saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox"
+00:20:25.377371          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:20:25.414548          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is Running)}, preserve=false aResultDetail=0
+00:20:25.618079          Saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox" with version "1.19-windows"
+00:20:25.641711          Finished saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox"
+00:20:25.654907          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:20:25.673043          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is Running)}, preserve=false aResultDetail=0
+00:20:28.226413          Saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox" with version "1.19-windows"
+00:20:28.231790          Finished saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox"
+00:20:28.246829          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:20:28.268071          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is Running)}, preserve=false aResultDetail=0
+00:29:02.245545          Saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox" with version "1.19-windows"
+00:29:02.250988          Finished saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox"
+00:29:02.272450          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:29:02.302256          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:29:02.327732          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is Running)}, preserve=false aResultDetail=0
+00:30:36.891258          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:30:36.909753          ERROR [COM]: aRC=E_FAIL (0x80004005) aIID={bea3ef5c-de2f-4b74-aa3a-15d6249371a0} aComponent={RecordingSettingsWrap} aText={Recording not started}, preserve=false aResultDetail=0
+00:30:36.914458          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is Paused)}, preserve=false aResultDetail=0
+00:30:39.355539          ERROR [COM]: aRC=E_FAIL (0x80004005) aIID={bea3ef5c-de2f-4b74-aa3a-15d6249371a0} aComponent={RecordingSettingsWrap} aText={Recording not started}, preserve=false aResultDetail=0
+00:30:39.410266          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:30:39.450681          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is Stopping)}, preserve=false aResultDetail=0
+00:30:39.814848          Saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox" with version "1.19-windows"
+00:30:39.819702          Finished saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox"
+00:30:39.853193          ERROR [COM]: aRC=E_FAIL (0x80004005) aIID={bea3ef5c-de2f-4b74-aa3a-15d6249371a0} aComponent={RecordingSettingsWrap} aText={Recording not started}, preserve=false aResultDetail=0
+00:30:39.887840          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:30:39.904518          ERROR [COM]: aRC=E_INVALIDARG (0x80070057) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={SessionMachine} aText={Properties with TRANSIENT or TRANSRESET flag cannot be set or modified if VM is not running}, preserve=false aResultDetail=0
+00:30:39.932239          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is PoweredOff)}, preserve=false aResultDetail=0
+00:30:40.946585          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:30:41.027779          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is PoweredOff)}, preserve=false aResultDetail=0
+00:30:52.115912          Platform architecture set to 'x86'
+00:30:52.124796          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:30:52.661403          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:30:52.667953          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is PoweredOff)}, preserve=false aResultDetail=0
+00:32:17.786634          Platform architecture set to 'x86'
+00:32:17.904344          Saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox" with version "1.19-windows"
+00:32:17.910272          Finished saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox"
+00:32:18.020632          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:32:18.049463          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is PoweredOff)}, preserve=false aResultDetail=0
+00:32:27.222226          Launched VM: 2315068832 pid: 3368 (0xd28) frontend: GUI/Qt name: Attacker-VM
+00:32:27.311020          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:32:27.356135          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is PoweredOff)}, preserve=false aResultDetail=0
+00:32:34.681005          Platform architecture set to 'x86'
+00:32:34.855677          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:32:34.862406          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is PoweredOff)}, preserve=false aResultDetail=0
+00:32:36.149859          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={70401eef-c8e9-466b-9660-45cb3e9979e4} aComponent={ExtPackManagerWrap} aText={No extension pack by the name 'Oracle VirtualBox Extension Pack' was found}, preserve=false aResultDetail=0
+00:32:36.259560          ERROR [COM]: aRC=E_FAIL (0x80004005) aIID={bea3ef5c-de2f-4b74-aa3a-15d6249371a0} aComponent={RecordingSettingsWrap} aText={Recording not started}, preserve=false aResultDetail=0
+00:32:39.240926          ERROR [COM]: aRC=E_FAIL (0x80004005) aIID={bea3ef5c-de2f-4b74-aa3a-15d6249371a0} aComponent={RecordingSettingsWrap} aText={Recording not started}, preserve=false aResultDetail=0
+00:32:39.267428          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:32:39.272545          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={SessionMachine} aText={The machine is not mutable or saved (state is Starting)}, preserve=false aResultDetail=0
+00:32:39.305255          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is Starting)}, preserve=false aResultDetail=0
+00:32:39.336490          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={SessionMachine} aText={The machine is not mutable or saved (state is Starting)}, preserve=false aResultDetail=0
+00:32:39.339934          Saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox" with version "1.19-windows"
+00:32:39.345828          Finished saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox"
+00:32:39.379756          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:32:39.390502          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is Starting)}, preserve=false aResultDetail=0
+00:32:40.892537          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={7d510820-a678-4730-a862-818dcd3fbed0} aComponent={MediumWrap} aText={Property 'CRYPT/KeyId' does not exist}, preserve=false aResultDetail=0
+00:32:40.893733          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={7d510820-a678-4730-a862-818dcd3fbed0} aComponent={MediumWrap} aText={Property 'CRYPT/KeyId' does not exist}, preserve=false aResultDetail=0
+00:32:40.894686          HostDnsMonitorProxy::GetDomainName: strathmore.local
+00:32:40.894814          HostDnsMonitorProxy::GetNameServers:
+00:32:40.894871            name server 1: 192.168.170.52
+00:32:40.894884            name server 2: 192.168.170.51
+00:32:40.894896            name server 3: 192.168.170.20
+00:32:40.894908            name server 4: 192.168.170.19
+00:32:40.894927            name server 5: 192.168.170.35
+00:32:40.894939            name server 6: 192.168.170.38
+00:32:40.895090          HostDnsMonitorProxy::GetSearchStrings:
+00:32:40.895112            no search string entries
+00:32:40.952329          ERROR [COM]: aRC=E_FAIL (0x80004005) aIID={bea3ef5c-de2f-4b74-aa3a-15d6249371a0} aComponent={RecordingSettingsWrap} aText={Recording not started}, preserve=false aResultDetail=0
+00:32:41.033151          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:32:41.082160          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is Running)}, preserve=false aResultDetail=0
+00:32:43.990498          Saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox" with version "1.19-windows"
+00:32:44.015591          Finished saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox"
+00:32:44.028385          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:32:44.070534          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is Running)}, preserve=false aResultDetail=0
+00:33:46.883515          Saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox" with version "1.19-windows"
+00:33:46.889722          Finished saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox"
+00:33:46.909459          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+00:33:46.972905          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is Running)}, preserve=false aResultDetail=0
+01:11:43.045089 dns-monitor HostDnsMonitor: updating information
+01:11:43.045310 dns-monitor HostDnsMonitor: unchanged
+02:05:52.846744 dns-monitor HostDnsMonitor: updating information
+02:05:52.846987 dns-monitor HostDnsMonitor: old information
+02:05:52.847019 dns-monitor   server 1: 192.168.170.52
+02:05:52.847041 dns-monitor   server 2: 192.168.170.51
+02:05:52.847055 dns-monitor   server 3: 192.168.170.20
+02:05:52.847067 dns-monitor   server 4: 192.168.170.19
+02:05:52.847079 dns-monitor   server 5: 192.168.170.35
+02:05:52.847102 dns-monitor   server 6: 192.168.170.38
+02:05:52.847124 dns-monitor   domain: strathmore.local
+02:05:52.847144 dns-monitor   no search string entries
+02:05:52.847158 dns-monitor HostDnsMonitor: new information
+02:05:52.847171 dns-monitor   no server entries
+02:05:52.847182 dns-monitor   no domain set
+02:05:52.847193 dns-monitor   no search string entries
+02:05:52.854705          HostDnsMonitorProxy::GetDomainName: no domain set
+02:05:52.854929          HostDnsMonitorProxy::GetNameServers:
+02:05:52.854955            no name server entries
+02:05:52.855114          HostDnsMonitorProxy::GetSearchStrings:
+02:05:52.855141            no search string entries
+02:05:55.222642 dns-monitor HostDnsMonitor: updating information
+02:05:55.222690 dns-monitor HostDnsMonitor: unchanged
+02:05:57.429161 dns-monitor HostDnsMonitor: updating information
+02:05:57.429204 dns-monitor HostDnsMonitor: old information
+02:05:57.429216 dns-monitor   no server entries
+02:05:57.429226 dns-monitor   no domain set
+02:05:57.429236 dns-monitor   no search string entries
+02:05:57.429246 dns-monitor HostDnsMonitor: new information
+02:05:57.429255 dns-monitor   server 1: 192.168.170.52
+02:05:57.429265 dns-monitor   server 2: 192.168.170.51
+02:05:57.429275 dns-monitor   server 3: 192.168.170.20
+02:05:57.429285 dns-monitor   server 4: 192.168.170.19
+02:05:57.429294 dns-monitor   server 5: 192.168.170.35
+02:05:57.429304 dns-monitor   server 6: 192.168.170.38
+02:05:57.429313 dns-monitor   domain: strathmore.local
+02:05:57.429323 dns-monitor   no search string entries
+02:05:57.430125          HostDnsMonitorProxy::GetDomainName: strathmore.local
+02:05:57.430252          HostDnsMonitorProxy::GetNameServers:
+02:05:57.430269            name server 1: 192.168.170.52
+02:05:57.430280            name server 2: 192.168.170.51
+02:05:57.430290            name server 3: 192.168.170.20
+02:05:57.430300            name server 4: 192.168.170.19
+02:05:57.430309            name server 5: 192.168.170.35
+02:05:57.430319            name server 6: 192.168.170.38
+02:05:57.430441          HostDnsMonitorProxy::GetSearchStrings:
+02:05:57.430458            no search string entries
+02:45:56.936033 dns-monitor HostDnsMonitor: updating information
+02:45:56.936105 dns-monitor HostDnsMonitor: old information
+02:45:56.936122 dns-monitor   server 1: 192.168.170.52
+02:45:56.936134 dns-monitor   server 2: 192.168.170.51
+02:45:56.936146 dns-monitor   server 3: 192.168.170.20
+02:45:56.936158 dns-monitor   server 4: 192.168.170.19
+02:45:56.936168 dns-monitor   server 5: 192.168.170.35
+02:45:56.936179 dns-monitor   server 6: 192.168.170.38
+02:45:56.936191 dns-monitor   domain: strathmore.local
+02:45:56.936202 dns-monitor   no search string entries
+02:45:56.936213 dns-monitor HostDnsMonitor: new information
+02:45:56.936224 dns-monitor   no server entries
+02:45:56.936236 dns-monitor   no domain set
+02:45:56.936246 dns-monitor   no search string entries
+02:45:56.938103          HostDnsMonitorProxy::GetDomainName: no domain set
+02:45:56.938274          HostDnsMonitorProxy::GetNameServers:
+02:45:56.938298            no name server entries
+02:45:56.938456          HostDnsMonitorProxy::GetSearchStrings:
+02:45:56.938481            no search string entries
+02:45:59.647587 dns-monitor HostDnsMonitor: updating information
+02:45:59.647636 dns-monitor HostDnsMonitor: old information
+02:45:59.647651 dns-monitor   no server entries
+02:45:59.647663 dns-monitor   no domain set
+02:45:59.647675 dns-monitor   no search string entries
+02:45:59.647686 dns-monitor HostDnsMonitor: new information
+02:45:59.647696 dns-monitor   server 1: 192.168.170.52
+02:45:59.647706 dns-monitor   server 2: 192.168.170.51
+02:45:59.647718 dns-monitor   server 3: 192.168.170.20
+02:45:59.647731 dns-monitor   server 4: 192.168.170.19
+02:45:59.647750 dns-monitor   server 5: 192.168.170.35
+02:45:59.647766 dns-monitor   server 6: 192.168.170.38
+02:45:59.647779 dns-monitor   domain: strathmore.local
+02:45:59.647791 dns-monitor   no search string entries
+02:45:59.648612          HostDnsMonitorProxy::GetDomainName: strathmore.local
+02:45:59.648796          HostDnsMonitorProxy::GetNameServers:
+02:45:59.648821            name server 1: 192.168.170.52
+02:45:59.648834            name server 2: 192.168.170.51
+02:45:59.648843            name server 3: 192.168.170.20
+02:45:59.648853            name server 4: 192.168.170.19
+02:45:59.648861            name server 5: 192.168.170.35
+02:45:59.648869            name server 6: 192.168.170.38
+02:45:59.649003          HostDnsMonitorProxy::GetSearchStrings:
+02:45:59.649021            no search string entries
+02:55:42.492808 MainPower Host suspending: Paused 1 VMs
+02:55:42.641457          ERROR [COM]: aRC=E_FAIL (0x80004005) aIID={bea3ef5c-de2f-4b74-aa3a-15d6249371a0} aComponent={RecordingSettingsWrap} aText={Recording not started}, preserve=false aResultDetail=0
+02:55:43.083661          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+02:55:43.107549          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is Paused)}, preserve=false aResultDetail=0
+03:38:54.247479 MainPower Host resumed: Resumed 1 VMs
+03:38:55.671389          ERROR [COM]: aRC=E_FAIL (0x80004005) aIID={bea3ef5c-de2f-4b74-aa3a-15d6249371a0} aComponent={RecordingSettingsWrap} aText={Recording not started}, preserve=false aResultDetail=0
+03:38:56.232426 dns-monitor HostDnsMonitor: updating information
+03:38:56.232487 dns-monitor HostDnsMonitor: old information
+03:38:56.232497 dns-monitor   server 1: 192.168.170.52
+03:38:56.232505 dns-monitor   server 2: 192.168.170.51
+03:38:56.232511 dns-monitor   server 3: 192.168.170.20
+03:38:56.232516 dns-monitor   server 4: 192.168.170.19
+03:38:56.232521 dns-monitor   server 5: 192.168.170.35
+03:38:56.232527 dns-monitor   server 6: 192.168.170.38
+03:38:56.232532 dns-monitor   domain: strathmore.local
+03:38:56.232537 dns-monitor   no search string entries
+03:38:56.232544 dns-monitor HostDnsMonitor: new information
+03:38:56.232549 dns-monitor   no server entries
+03:38:56.232554 dns-monitor   no domain set
+03:38:56.232559 dns-monitor   no search string entries
+03:38:56.233196          HostDnsMonitorProxy::GetDomainName: no domain set
+03:38:56.233284          HostDnsMonitorProxy::GetNameServers:
+03:38:56.233297            no name server entries
+03:38:56.233383          HostDnsMonitorProxy::GetSearchStrings:
+03:38:56.233397            no search string entries
+03:38:56.818742          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+03:38:56.998952          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is Running)}, preserve=false aResultDetail=0
+03:38:57.608694 USBPROXY usbLibGetDevices: Starting USB device enumeration
+03:38:57.609037 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 3
+03:38:57.609232 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+03:38:57.612707 USBPROXY usbLibGetDevices: Found 3 USB devices, 0 captured
+03:38:57.615717 USBPROXY USB: Unknown USB device detected (idVendor: 0x06cb, idProduct: 0x0169)
+03:39:04.137916 dns-monitor HostDnsMonitor: updating information
+03:39:04.137956 dns-monitor HostDnsMonitor: unchanged
+03:39:08.915928 dns-monitor HostDnsMonitor: updating information
+03:39:08.915969 dns-monitor HostDnsMonitor: old information
+03:39:08.915976 dns-monitor   no server entries
+03:39:08.915982 dns-monitor   no domain set
+03:39:08.915994 dns-monitor   no search string entries
+03:39:08.916001 dns-monitor HostDnsMonitor: new information
+03:39:08.916006 dns-monitor   server 1: 192.168.170.52
+03:39:08.916012 dns-monitor   server 2: 192.168.170.51
+03:39:08.916018 dns-monitor   server 3: 192.168.170.20
+03:39:08.916023 dns-monitor   server 4: 192.168.170.19
+03:39:08.916028 dns-monitor   server 5: 192.168.170.35
+03:39:08.916034 dns-monitor   server 6: 192.168.170.38
+03:39:08.916039 dns-monitor   domain: strathmore.local
+03:39:08.916044 dns-monitor   no search string entries
+03:39:08.916662          HostDnsMonitorProxy::GetDomainName: strathmore.local
+03:39:08.916749          HostDnsMonitorProxy::GetNameServers:
+03:39:08.916760            name server 1: 192.168.170.52
+03:39:08.916767            name server 2: 192.168.170.51
+03:39:08.916772            name server 3: 192.168.170.20
+03:39:08.916777            name server 4: 192.168.170.19
+03:39:08.916782            name server 5: 192.168.170.35
+03:39:08.916787            name server 6: 192.168.170.38
+03:39:08.916868          HostDnsMonitorProxy::GetSearchStrings:
+03:39:08.916877            no search string entries
+03:39:23.966210 dns-monitor HostDnsMonitor: updating information
+03:39:23.966263 dns-monitor HostDnsMonitor: unchanged
+03:39:35.469055 USBPROXY usbLibGetDevices: Starting USB device enumeration
+03:39:35.469266 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 3
+03:39:35.469337 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+03:39:35.469469 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&1bf845b2&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+03:39:35.469618 USBPROXY usbLibGetDevices: Found 3 USB devices, 0 captured
+03:39:35.469655 USBPROXY USB: Unknown USB device detected (idVendor: 0x06cb, idProduct: 0x0169)
+03:39:38.016951 USBPROXY usbLibGetDevices: Starting USB device enumeration
+03:39:38.017144 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 3
+03:39:38.017215 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+03:39:38.017350 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&1bf845b2&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+03:39:38.017480 USBPROXY usbLibGetDevices: Found 3 USB devices, 0 captured
+03:39:42.699224 USBPROXY usbLibGetDevices: Starting USB device enumeration
+03:39:42.699519 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 3
+03:39:42.699638 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+03:39:42.699803 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&1bf845b2&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+03:39:42.700011 USBPROXY usbLibGetDevices: Found 3 USB devices, 0 captured
+03:39:51.162558 dns-monitor HostDnsMonitor: updating information
+03:39:51.162588 dns-monitor HostDnsMonitor: unchanged
+03:40:21.198092 USBPROXY usbLibGetDevices: Starting USB device enumeration
+03:40:21.198300 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 3
+03:40:21.198391 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+03:40:21.204860 USBPROXY usbLibGetDevices: Found 4 USB devices, 0 captured
+03:40:21.204934 USBPROXY USB: Unknown USB device detected (idVendor: 0x06cb, idProduct: 0x0169)
+03:40:21.205152 USBPROXY USB: Unknown USB device detected (idVendor: 0x30fa, idProduct: 0x0300)
+03:41:30.385546 USBPROXY usbLibGetDevices: Starting USB device enumeration
+03:41:30.385871 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 3
+03:41:30.385983 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+03:41:30.389764 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&1bf845b2&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+03:41:30.390065 USBPROXY usbLibGetDevices: Found 4 USB devices, 0 captured
+03:41:30.390133 USBPROXY USB: Unknown USB device detected (idVendor: 0x06cb, idProduct: 0x0169)
+03:42:07.204616 dns-monitor HostDnsMonitor: updating information
+03:42:07.204684 dns-monitor HostDnsMonitor: old information
+03:42:07.204702 dns-monitor   server 1: 192.168.170.52
+03:42:07.204711 dns-monitor   server 2: 192.168.170.51
+03:42:07.204718 dns-monitor   server 3: 192.168.170.20
+03:42:07.204724 dns-monitor   server 4: 192.168.170.19
+03:42:07.204744 dns-monitor   server 5: 192.168.170.35
+03:42:07.204751 dns-monitor   server 6: 192.168.170.38
+03:42:07.204757 dns-monitor   domain: strathmore.local
+03:42:07.204763 dns-monitor   no search string entries
+03:42:07.204770 dns-monitor HostDnsMonitor: new information
+03:42:07.204775 dns-monitor   no server entries
+03:42:07.204781 dns-monitor   no domain set
+03:42:07.204787 dns-monitor   no search string entries
+03:42:07.206165          HostDnsMonitorProxy::GetDomainName: no domain set
+03:42:07.206308          HostDnsMonitorProxy::GetNameServers:
+03:42:07.206328            no name server entries
+03:42:07.206438          HostDnsMonitorProxy::GetSearchStrings:
+03:42:07.206456            no search string entries
+03:42:11.594113 dns-monitor HostDnsMonitor: updating information
+03:42:11.594157 dns-monitor HostDnsMonitor: old information
+03:42:11.594173 dns-monitor   no server entries
+03:42:11.594189 dns-monitor   no domain set
+03:42:11.594208 dns-monitor   no search string entries
+03:42:11.594222 dns-monitor HostDnsMonitor: new information
+03:42:11.594234 dns-monitor   server 1: 192.168.170.52
+03:42:11.594246 dns-monitor   server 2: 192.168.170.51
+03:42:11.594259 dns-monitor   server 3: 192.168.170.20
+03:42:11.594271 dns-monitor   server 4: 192.168.170.19
+03:42:11.594283 dns-monitor   server 5: 192.168.170.35
+03:42:11.594303 dns-monitor   server 6: 192.168.170.38
+03:42:11.594317 dns-monitor   domain: strathmore.local
+03:42:11.594329 dns-monitor   no search string entries
+03:42:11.595170          HostDnsMonitorProxy::GetDomainName: strathmore.local
+03:42:11.595337          HostDnsMonitorProxy::GetNameServers:
+03:42:11.595363            name server 1: 192.168.170.52
+03:42:11.595376            name server 2: 192.168.170.51
+03:42:11.595388            name server 3: 192.168.170.20
+03:42:11.595399            name server 4: 192.168.170.19
+03:42:11.595411            name server 5: 192.168.170.35
+03:42:11.595422            name server 6: 192.168.170.38
+03:42:11.595578          HostDnsMonitorProxy::GetSearchStrings:
+03:42:11.595607            no search string entries
+03:42:13.753968 dns-monitor HostDnsMonitor: updating information
+03:42:13.754013 dns-monitor HostDnsMonitor: unchanged
+03:46:31.215575 dns-monitor HostDnsMonitor: updating information
+03:46:31.215621 dns-monitor HostDnsMonitor: unchanged
+04:03:38.239089 dns-monitor HostDnsMonitor: updating information
+04:03:38.239137 dns-monitor HostDnsMonitor: unchanged
+04:13:03.817426 dns-monitor HostDnsMonitor: updating information
+04:13:03.817586 dns-monitor HostDnsMonitor: unchanged
+04:39:54.019771 USBPROXY usbLibGetDevices: Starting USB device enumeration
+04:39:54.020406 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 3
+04:39:54.020643 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+04:39:54.025839 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&1bf845b2&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+04:39:54.026356 USBPROXY usbLibGetDevices: Found 4 USB devices, 0 captured
+04:46:31.218707 dns-monitor HostDnsMonitor: updating information
+04:46:31.218868 dns-monitor HostDnsMonitor: unchanged
+06:13:35.428474 dns-monitor HostDnsMonitor: updating information
+06:13:35.428665 dns-monitor HostDnsMonitor: old information
+06:13:35.428686 dns-monitor   server 1: 192.168.170.52
+06:13:35.428702 dns-monitor   server 2: 192.168.170.51
+06:13:35.428715 dns-monitor   server 3: 192.168.170.20
+06:13:35.428727 dns-monitor   server 4: 192.168.170.19
+06:13:35.428739 dns-monitor   server 5: 192.168.170.35
+06:13:35.428750 dns-monitor   server 6: 192.168.170.38
+06:13:35.428762 dns-monitor   domain: strathmore.local
+06:13:35.428775 dns-monitor   no search string entries
+06:13:35.428787 dns-monitor HostDnsMonitor: new information
+06:13:35.428799 dns-monitor   no server entries
+06:13:35.428812 dns-monitor   no domain set
+06:13:35.428824 dns-monitor   no search string entries
+06:13:35.430901          HostDnsMonitorProxy::GetDomainName: no domain set
+06:13:35.431100          HostDnsMonitorProxy::GetNameServers:
+06:13:35.431133            no name server entries
+06:13:35.431284          HostDnsMonitorProxy::GetSearchStrings:
+06:13:35.431312            no search string entries
+06:35:31.016081 dns-monitor HostDnsMonitor: updating information
+06:35:31.016147 dns-monitor HostDnsMonitor: old information
+06:35:31.016160 dns-monitor   no server entries
+06:35:31.016170 dns-monitor   no domain set
+06:35:31.016180 dns-monitor   no search string entries
+06:35:31.016191 dns-monitor HostDnsMonitor: new information
+06:35:31.016201 dns-monitor   server 1: 192.168.170.52
+06:35:31.016212 dns-monitor   server 2: 192.168.170.51
+06:35:31.016222 dns-monitor   server 3: 192.168.170.20
+06:35:31.016231 dns-monitor   server 4: 192.168.170.19
+06:35:31.016241 dns-monitor   server 5: 192.168.170.35
+06:35:31.016250 dns-monitor   server 6: 192.168.170.38
+06:35:31.016260 dns-monitor   domain: strathmore.local
+06:35:31.016269 dns-monitor   no search string entries
+06:35:31.017167          HostDnsMonitorProxy::GetDomainName: strathmore.local
+06:35:31.017354          HostDnsMonitorProxy::GetNameServers:
+06:35:31.017377            name server 1: 192.168.170.52
+06:35:31.017390            name server 2: 192.168.170.51
+06:35:31.017401            name server 3: 192.168.170.20
+06:35:31.017412            name server 4: 192.168.170.19
+06:35:31.017422            name server 5: 192.168.170.35
+06:35:31.017432            name server 6: 192.168.170.38
+06:35:31.017597          HostDnsMonitorProxy::GetSearchStrings:
+06:35:31.017622            no search string entries
+06:35:49.287652 dns-monitor HostDnsMonitor: updating information
+06:35:49.287710 dns-monitor HostDnsMonitor: unchanged
+06:36:03.533533 USBPROXY usbLibGetDevices: Starting USB device enumeration
+06:36:03.533850 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 3
+06:36:03.533960 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+06:36:03.534166 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&1bf845b2&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+06:36:03.534375 USBPROXY usbLibGetDevices: Found 3 USB devices, 0 captured
+06:36:07.622727 USBPROXY usbLibGetDevices: Starting USB device enumeration
+06:36:07.623033 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 3
+06:36:07.623155 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+06:36:07.623405 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&1bf845b2&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+06:36:07.623699 USBPROXY usbLibGetDevices: Found 3 USB devices, 0 captured
+06:36:16.541061 USBPROXY usbLibGetDevices: Starting USB device enumeration
+06:36:16.541760 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 3
+06:36:16.542295 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+06:36:16.542899 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&1bf845b2&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+06:36:16.546075 USBPROXY usbLibGetDevices: Found 3 USB devices, 0 captured
+06:36:19.410492 USBPROXY usbLibGetDevices: Starting USB device enumeration
+06:36:19.410808 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 3
+06:36:19.410927 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&35f1e08&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+06:36:19.411174 USBPROXY Getting USB descriptor (id 0) failed (dwErr=31) on hub USB#ROOT_HUB30#5&1bf845b2&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8} port 4
+06:36:19.411410 USBPROXY usbLibGetDevices: Found 3 USB devices, 0 captured
+06:36:24.184214 dns-monitor HostDnsMonitor: updating information
+06:36:24.184248 dns-monitor HostDnsMonitor: unchanged
+06:36:31.108506          Saving settings file "C:\Users\samob\.VirtualBox\VirtualBox.xml" with version "1.12-windows"
+06:36:31.114890          Finished saving settings file "C:\Users\samob\.VirtualBox\VirtualBox.xml"
+06:37:03.819056          Saving settings file "C:\Users\samob\.VirtualBox\VirtualBox.xml" with version "1.12-windows"
+06:37:03.842968          Finished saving settings file "C:\Users\samob\.VirtualBox\VirtualBox.xml"
+06:37:03.932770          ERROR [COM]: aRC=E_FAIL (0x80004005) aIID={bea3ef5c-de2f-4b74-aa3a-15d6249371a0} aComponent={RecordingSettingsWrap} aText={Recording not started}, preserve=false aResultDetail=0
+06:37:04.001255          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+06:37:04.043784          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is Stopping)}, preserve=false aResultDetail=0
+06:37:04.389928          Saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox" with version "1.19-windows"
+06:37:04.402511          Finished saving settings file "C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vbox"
+06:37:04.471693          ERROR [COM]: aRC=E_FAIL (0x80004005) aIID={bea3ef5c-de2f-4b74-aa3a-15d6249371a0} aComponent={RecordingSettingsWrap} aText={Recording not started}, preserve=false aResultDetail=0
+06:37:04.514802          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+06:37:04.564231          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is PoweredOff)}, preserve=false aResultDetail=0
+06:37:05.478979          ERROR [COM]: aRC=VBOX_E_OBJECT_NOT_FOUND (0x80bb0001) aIID={5bfd8965-b81b-469f-8649-f717ce97a5d5} aComponent={NvramStoreWrap} aText={The UEFI NVRAM file is not existing for this machine}, preserve=false aResultDetail=0
+06:37:05.542599          ERROR [COM]: aRC=VBOX_E_INVALID_VM_STATE (0x80bb0002) aIID={e36a5081-a82a-40bd-9e4e-42a44d6ce50f} aComponent={MachineWrap} aText={The machine is not mutable, saved or running (state is PoweredOff)}, preserve=false aResultDetail=0
+06:37:18.060592 main     VirtualBox: object deletion starts
+06:37:18.060788 main     ERROR [COM]: aRC=VBOX_E_OBJECT_IN_USE (0x80bb000c) aIID={7d510820-a678-4730-a862-818dcd3fbed0} aComponent={MediumWrap} aText={Medium 'C:\Users\samob\Downloads\kali-linux-2024.4-virtualbox-amd64\kali-linux-2024.4-virtualbox-amd64\kali-linux-2024.4-virtualbox-amd64.vdi' cannot be closed because it is still attached to 1 virtual machines}, preserve=false aResultDetail=0
+06:37:18.064592 main     ERROR [COM]: aRC=VBOX_E_OBJECT_IN_USE (0x80bb000c) aIID={7d510820-a678-4730-a862-818dcd3fbed0} aComponent={MediumWrap} aText={Medium 'C:\Users\samob\VirtualBox VMs\Victim-VM\Victim-VM.vdi' cannot be closed because it is still attached to 1 virtual machines}, preserve=false aResultDetail=0
+06:37:18.065436 main     ERROR [COM]: aRC=VBOX_E_OBJECT_IN_USE (0x80bb000c) aIID={7d510820-a678-4730-a862-818dcd3fbed0} aComponent={MediumWrap} aText={Medium 'C:\Users\samob\VirtualBox VMs\Attacker-VM\Attacker-VM.vdi' cannot be closed because it is still attached to 1 virtual machines}, preserve=false aResultDetail=0
+06:37:18.068049 main     HostDnsMonitor: shutting down ...
+06:37:18.068138 main     HostDnsMonitor: shut down
+06:37:18.076326 Watcher  ERROR [COM]: aRC=E_ACCESSDENIED (0x80070005) aIID={d644ad1e-c501-4fc7-9ab6-aa6d763bc540} aComponent={VirtualBoxWrap} aText={The object is not ready}, preserve=false aResultDetail=0
+06:37:18.076990 main     VirtualBox: object deleted
