@@ -10,7 +10,7 @@ class Database {
         $this->host = getenv('DB_HOST') ?: 'localhost';
         $this->db_name = getenv('DB_NAME') ?: 'farm';
         $this->username = getenv('DB_USER') ?: 'root';
-        $this->password = getenv('DB_PASS') ?: '';
+        $this->password = getenv('DB_PASS') ?: '1234';
     }
     
     public function getConnection() {

@@ -19,7 +19,8 @@ date_default_timezone_set('UTC');
 // Composer autoloader
     require_once __DIR__ . '/../vendor/autoload.php';
 
-use FarmManagement\Config\Database;
+require_once __DIR__ . '/config/Database.php';
+// Remove or adjust the namespace if Database.php does not declare it
 require_once __DIR__ . '/controllers/AuthController.php';
 use FarmManagement\Controllers\AuthController;
 
@@ -172,88 +173,138 @@ function serveWelcomePage() {
             ]
         ]);
     } else {
-        // Serve HTML welcome page
         header('Content-Type: text/html');
         echo <<<HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Farm Management System</title>
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        body {
             margin: 0;
-            padding: 0;
-            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+        }
+        header {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            overflow: hidden;
+        }
+        header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.8);
+        }
+        header .overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            flex-direction: column;
+            color: #fff;
             text-align: center;
-            max-width: 500px;
+            background: rgba(0,0,0,0.3);
         }
-        h1 {
-            color: #2d3748;
-            margin-bottom: 10px;
+        header h1 {
+            font-size: 3rem;
+            margin: 0;
         }
-        p {
-            color: #4a5568;
-            margin-bottom: 20px;
+        header p {
+            font-size: 1.2rem;
+        }
+        main {
+            max-width: 1000px;
+            margin: -40px auto 50px;
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        .btn-group {
+            text-align: center;
+            margin-bottom: 30px;
         }
         .btn {
-            display: inline-block;
-            padding: 12px 24px;
-            background: #667eea;
-            color: white;
+            background-color: #27ae60;
+            color: #fff;
+            padding: 12px 28px;
+            margin: 0 8px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
             text-decoration: none;
-            border-radius: 5px;
-            margin: 5px;
+            display: inline-block;
+            transition: 0.3s;
         }
         .btn:hover {
-            background: #5a6fd8;
+            background-color: #229954;
         }
-        .api-info {
-            background: #f7fafc;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
-            text-align: left;
+        .api-section h3 {
+            text-align: center;
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+        .api-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .api-card {
+            background: #eaf7ed;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
+        }
+        .api-card strong {
+            color: #27ae60;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🚜 Farm Management System</h1>
-        <p>Welcome to your agricultural management platform</p>
-        
-        <div>
-            <a href="/login" class="btn">Login</a>
-            <a href="/register" class="btn">Register</a>
+    <header>
+        <!-- Replace this URL with your preferred farm banner image -->
+        <img src="https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=1600&q=80" 
+             alt="Farm banner image">
+        <div class="overlay">
+            <h1>🌾 Farm Management System</h1>
+            <p>Efficiently manage your agricultural operations</p>
         </div>
-        
-        <div class="api-info">
-            <h3>API Endpoints:</h3>
-            <ul>
-                <li><strong>POST /api/register</strong> - User registration</li>
-                <li><strong>POST /api/login</strong> - User login</li>
-                <li><strong>POST /api/verify-2fa</strong> - Verify 2FA code</li>
-                <li><strong>GET /api/health</strong> - System status</li>
-            </ul>
+    </header>
+
+    <main>
+        <div class="btn-group">
+            <a href="/login" class="btn">Log In</a>
+            <a href="/register" class="btn">Sign Up</a>
         </div>
-    </div>
+
+        <section class="api-section">
+            <h3>Important API Endpoints</h3>
+            <div class="api-cards">
+                <div class="api-card"><strong>POST /api/register</strong><br>User registration</div>
+                <div class="api-card"><strong>POST /api/login</strong><br>User login</div>
+                <div class="api-card"><strong>POST /api/verify-2fa</strong><br>Verify 2FA code</div>
+                <div class="api-card"><strong>POST /api/logout</strong><br>User logout</div>
+                <div class="api-card"><strong>GET /api/validate-token</strong><br>Validate JWT token</div>
+                <div class="api-card"><strong>GET /api/health</strong><br>System health check</div>
+            </div>
+        </section>
+    </main>
 </body>
 </html>
 HTML;
     }
 }
+
+
+
 
 /**
  * Serve static pages
