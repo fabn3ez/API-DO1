@@ -17,15 +17,21 @@ if (getenv('APP_ENV') === 'development' || (isset($_ENV['APP_DEBUG']) && $_ENV['
 date_default_timezone_set('UTC');
 
 // Composer autoloader
-require_once __DIR__ . '/vendor/autoload.php';
+    require_once __DIR__ . '/../vendor/autoload.php';
 
-use FarmManagement\Utils\ErrorHandler;
 use FarmManagement\Config\Database;
+require_once __DIR__ . '/controllers/AuthController.php';
 use FarmManagement\Controllers\AuthController;
 
+// Manually require ErrorHandler if autoload is not working
+if (!class_exists('FarmManagement\\Utils\\ErrorHandler')) {
+    require_once __DIR__ . '/utils/ErrorHandler.php';
+}
+use FarmManagement\Utils\ErrorHandler;
+
 // Register error handlers
-set_exception_handler([ErrorHandler::class, 'handleException']);
-set_error_handler([ErrorHandler::class, 'handleError']);
+//set_exception_handler(['FarmManagement\\Utils\\ErrorHandler', 'handleException']);
+//set_error_handler(['FarmManagement\\Utils\\ErrorHandler', 'handleError']);
 
 // CORS headers for API requests
 header("Access-Control-Allow-Origin: " . ($_ENV['ALLOWED_ORIGINS'] ?? '*'));
@@ -53,9 +59,11 @@ try {
     $queryString = $_SERVER['QUERY_STRING'] ?? '';
     
     // Remove base path if application is in a subdirectory
-    $basePath = '/farm-management-system';
-    if (strpos($requestUri, $basePath) === 0) {
-        $requestUri = substr($requestUri, strlen($basePath));
+    $basePaths = ['/API-DO1/farm-management-system', '/farm-management-system'];
+    foreach ($basePaths as $basePath) {
+        if (strpos($requestUri, $basePath) === 0) {
+            $requestUri = substr($requestUri, strlen($basePath));
+        }
     }
     
     // Remove trailing slash
@@ -110,42 +118,34 @@ try {
             
         // Web Routes
         case $requestUri === '/register' && $requestMethod === 'GET':
-            $this->serveStaticPage('register');
+            serveStaticPage('register');
             break;
-            
         case $requestUri === '/login' && $requestMethod === 'GET':
-            $this->serveStaticPage('login');
+            serveStaticPage('login');
             break;
-            
         case $requestUri === '/verify-2fa' && $requestMethod === 'GET':
-            $this->serveStaticPage('verify-2fa');
+            serveStaticPage('verify-2fa');
             break;
-            
         case $requestUri === '/dashboard' && $requestMethod === 'GET':
-            $this->serveStaticPage('dashboard');
+            serveStaticPage('dashboard');
             break;
-            
         case $requestUri === '/' && $requestMethod === 'GET':
-            $this->serveWelcomePage();
+            serveWelcomePage();
             break;
-            
         // Static asset routes
         case preg_match('/\.(css|js|png|jpg|jpeg|gif|ico|svg)$/i', $requestUri):
-            $this->serveStaticAsset($requestUri);
+            serveStaticAsset($requestUri);
             break;
-            
         // Health check endpoint
         case $requestUri === '/api/health' && $requestMethod === 'GET':
-            $this->healthCheck();
+            healthCheck();
             break;
-            
         // Database test endpoint
         case $requestUri === '/api/test-db' && $requestMethod === 'GET':
-            $this->testDatabase();
+            testDatabase();
             break;
-            
         default:
-            $this->handleNotFound($requestUri);
+            handleNotFound($requestUri);
             break;
     }
     
