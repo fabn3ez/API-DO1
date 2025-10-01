@@ -181,60 +181,69 @@ function serveWelcomePage() {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Farm Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0ffe0 0%, #e0f7fa 100%);
             color: #2c3e50;
         }
-        header {
-            position: relative;
-            width: 100%;
-            height: 320px;
-            overflow: hidden;
-        }
-        header img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: brightness(0.8);
-        }
-        header .overlay {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+        .navbar {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            flex-direction: column;
+            padding: 1rem 3rem;
+            background: #388e3c;
             color: #fff;
-            text-align: center;
-            background: rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
-        header h1 {
-            font-size: 3rem;
+        .navbar .logo {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
             margin: 0;
+            padding: 0;
         }
-        header p {
-            font-size: 1.2rem;
-        }
-        main {
-            max-width: 1000px;
-            margin: -40px auto 50px;
-            background: #fff;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-        }
-        .btn-group {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .btn {
-            background-color: #27ae60;
+        .navbar ul li a {
+            text-decoration: none;
             color: #fff;
-            padding: 12px 28px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .navbar ul li a:hover {
+            color: #e0ffe0;
+        }
+        .hero {
+            width: 100%;
+            background: linear-gradient(90deg, #388e3c 0%, #43a047 100%);
+            color: #fff;
+            padding: 60px 0 40px 0;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+        }
+        .hero .btn-group {
+            margin-top: 1.5rem;
+        }
+        .hero .btn {
+            background-color: #fff;
+            color: #388e3c;
+            padding: 14px 32px;
             margin: 0 8px;
             border: none;
             border-radius: 30px;
@@ -242,61 +251,158 @@ function serveWelcomePage() {
             cursor: pointer;
             text-decoration: none;
             display: inline-block;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 8px rgba(56,142,60,0.12);
             transition: 0.3s;
         }
-        .btn:hover {
-            background-color: #229954;
+        .hero .btn:hover {
+            background-color: #e0ffe0;
+            color: #2c3e50;
         }
-        .api-section h3 {
+        .features-section {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 0 60px 0;
+        }
+        .features-title {
             text-align: center;
-            color: #27ae60;
-            margin-bottom: 20px;
+            font-size: 2.2rem;
+            color: #388e3c;
+            margin-bottom: 2rem;
+            font-weight: 700;
         }
-        .api-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+        .feature-cards {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
         }
-        .api-card {
-            background: #eaf7ed;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
+        .feature-card {
+            flex: 1 1 220px;
+            max-width: 260px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+            padding: 2rem 1.2rem;
+            text-align: center;
+            color: #388e3c;
+            transition: transform 0.25s, box-shadow 0.25s;
+            position: relative;
         }
-        .api-card strong {
-            color: #27ae60;
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 12px 36px rgba(56,142,60,0.15);
+        }
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.7rem;
+            font-weight: 600;
+        }
+        .feature-card ul {
+            padding: 0;
+            margin: 1rem 0;
+            font-size: 1rem;
+            list-style: none;
+        }
+        .feature-card li {
+            margin: 0.5rem 0;
+            text-align: left;
+            padding-left: 1.2rem;
+            position: relative;
+        }
+        .feature-card li.crops::before { content: "🌾 "; position: absolute; left: 0; }
+        .feature-card li.livestock::before { content: "🐄 "; position: absolute; left: 0; }
+        .feature-card li.inventory::before { content: "📦 "; position: absolute; left: 0; }
+        .feature-card li.reports::before { content: "📊 "; position: absolute; left: 0; }
+        .feature-card li.users::before { content: "👤 "; position: absolute; left: 0; }
+        .feature-card li.settings::before { content: "⚙️ "; position: absolute; left: 0; }
+        @media (max-width: 900px) {
+            .feature-cards {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            .features-section {
+                padding: 1.5rem;
+            }
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <!-- Replace this URL with your preferred farm banner image -->
-        <img src="https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=1600&q=80" 
-             alt="Farm banner image">
-        <div class="overlay">
-            <h1>🌾 Farm Management System</h1>
-            <p>Efficiently manage your agricultural operations</p>
-        </div>
-    </header>
-
-    <main>
+    <nav class="navbar">
+        <div class="logo">🚜 Farm Management</div>
+        <ul>
+            <li><a href="index.php">Home</a></li>
+            <li><a href="crops.php">Crops</a></li>
+            <li><a href="livestock.php">Livestock</a></li>
+            <li><a href="inventory.php">Inventory</a></li>
+            <li><a href="reports.php">Reports</a></li>
+            <li><a href="users.php">Users</a></li>
+            <li><a href="settings.php">Settings</a></li>
+        </ul>
+    </nav>
+    <section class="hero">
+        <h1>Welcome to Your Farm Management System</h1>
+        <p>Efficiently manage your crops, livestock, inventory, and more!</p>
         <div class="btn-group">
             <a href="/login" class="btn">Log In</a>
             <a href="/register" class="btn">Sign Up</a>
         </div>
-
-        <section class="api-section">
-            <h3>Important API Endpoints</h3>
-            <div class="api-cards">
-                <div class="api-card"><strong>POST /api/register</strong><br>User registration</div>
-                <div class="api-card"><strong>POST /api/login</strong><br>User login</div>
-                <div class="api-card"><strong>POST /api/verify-2fa</strong><br>Verify 2FA code</div>
-                <div class="api-card"><strong>POST /api/logout</strong><br>User logout</div>
-                <div class="api-card"><strong>GET /api/validate-token</strong><br>Validate JWT token</div>
-                <div class="api-card"><strong>GET /api/health</strong><br>System health check</div>
+    </section>
+    <section class="features-section">
+        <div class="features-title">Farm Features</div>
+        <div class="feature-cards">
+            <div class="feature-card">
+                <h3>Crops</h3>
+                <ul>
+                    <li class="crops">Manage crop records</li>
+                    <li class="crops">Track planting & harvest</li>
+                    <li class="crops">Monitor crop health</li>
+                </ul>
             </div>
-        </section>
-    </main>
+            <div class="feature-card">
+                <h3>Livestock</h3>
+                <ul>
+                    <li class="livestock">Manage animal records</li>
+                    <li class="livestock">Track breeding & health</li>
+                    <li class="livestock">Monitor feed & production</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h3>Inventory</h3>
+                <ul>
+                    <li class="inventory">Supplies & equipment</li>
+                    <li class="inventory">Stock levels</li>
+                    <li class="inventory">Usage history</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h3>Reports</h3>
+                <ul>
+                    <li class="reports">Production reports</li>
+                    <li class="reports">Sales & expenses</li>
+                    <li class="reports">Performance analytics</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h3>Users</h3>
+                <ul>
+                    <li class="users">User management</li>
+                    <li class="users">Roles & permissions</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h3>Settings</h3>
+                <ul>
+                    <li class="settings">System configuration</li>
+                    <li class="settings">Notifications</li>
+                </ul>
+            </div>
+        </div>
+    </section>
 </body>
 </html>
 HTML;
