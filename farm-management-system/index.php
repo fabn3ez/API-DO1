@@ -335,12 +335,9 @@ function serveWelcomePage() {
     <nav class="navbar">
         <div class="logo">🚜 Farm Management</div>
         <ul>
-            <li><a href="index.php">Home</a></li>
-            <li><a href="crops.php">Crops</a></li>
-            <li><a href="livestock.php">Livestock</a></li>
+            <li><a href="/API-DO1/farm-management-system">Home</a></li>
+            <li><a href="about.php">About</a></li>
             <li><a href="inventory.php">Inventory</a></li>
-            <li><a href="reports.php">Reports</a></li>
-            <li><a href="users.php">Users</a></li>
             <li><a href="settings.php">Settings</a></li>
         </ul>
     </nav>
@@ -348,21 +345,13 @@ function serveWelcomePage() {
         <h1>Welcome to Your Farm Management System</h1>
         <p>Efficiently manage your crops, livestock, inventory, and more!</p>
         <div class="btn-group">
-            <a href="/login" class="btn">Log In</a>
-            <a href="/register" class="btn">Sign Up</a>
+            <a href="login.php" class="btn">Log In</a>
+            <a href="signup.php" class="btn">Sign Up</a>
         </div>
     </section>
     <section class="features-section">
         <div class="features-title">Farm Features</div>
         <div class="feature-cards">
-            <div class="feature-card">
-                <h3>Crops</h3>
-                <ul>
-                    <li class="crops">Manage crop records</li>
-                    <li class="crops">Track planting & harvest</li>
-                    <li class="crops">Monitor crop health</li>
-                </ul>
-            </div>
             <div class="feature-card">
                 <h3>Livestock</h3>
                 <ul>
