@@ -2,7 +2,7 @@
 
 //create animals table migration
 
-$mysqli = new mysqli("localhost", "root", "1234");
+$mysqli = new mysqli("localhost", "root", "qwer4321..E");
 if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
 }
