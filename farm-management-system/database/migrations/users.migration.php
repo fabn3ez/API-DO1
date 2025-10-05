@@ -2,7 +2,7 @@
 
 //create users table migration
 
-$mysqli = new mysqli("localhost", "root", "qwer4321..E");
+$mysqli = new mysqli("localhost", "root", "1234");
 if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
 }

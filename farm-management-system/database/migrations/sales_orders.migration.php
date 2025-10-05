@@ -1,7 +1,7 @@
 <?php
 
 //create sales_orders table migration
-$mysqli = new mysqli("localhost", "root", "qwer4321..E", "farm");
+$mysqli = new mysqli("localhost", "root", "1234", "farm");
 
 // Create sales_orders table
 $sql = "CREATE TABLE IF NOT EXISTS sales_orders (

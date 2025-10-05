@@ -1,6 +1,6 @@
 <?php
 //create inventory table migration
-$mysqli = new mysqli("localhost", "root", "qwer4321..E", "farm");
+$mysqli = new mysqli("localhost", "root", "1234", "farm");
 if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
 }
