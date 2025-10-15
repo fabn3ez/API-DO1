@@ -52,11 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param("sss", $username, $email, $hashed_password);
 
             if ($stmt->execute()) {
-                $message = '✅ Registration successful! You can now log in.';
-                $message_type = 'success';
-                // Clear inputs
-                $username = '';
-                $email = '';
+              echo "<script>
+                alert('✅ Registration successful! You can now log in.');
+                window.location.href = 'login.php';
+            </script>";
+            exit;
             } else {
                 $message = 'Error: Could not register user. Please try again.';
                 $message_type = 'error';
