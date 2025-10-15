@@ -1,10 +1,5 @@
 {
     "require": {
         "phpmailer/phpmailer": "^6.10"
-    },
-    "autoload": {
-        "psr-4": {
-            "FarmManagement\\": "farm-management-system/"
-        }
     }
 }

@@ -18,7 +18,14 @@ date_default_timezone_set('UTC');
 
 // Composer autoloader
     require_once __DIR__ . '/../vendor/autoload.php';
-
+    /*
+     * Ensure Composer dependencies are installed.
+     * Run this command in your project root (where composer.json is located):
+     *
+     *     composer install
+     *
+     * This will create the 'vendor' folder and install all required packages.
+     */
 require_once __DIR__ . '/config/Database.php';
 // Remove or adjust the namespace if Database.php does not declare it
 require_once __DIR__ . '/controllers/AuthController.php';
@@ -337,16 +344,16 @@ function serveWelcomePage() {
         <ul>
             <li><a href="/API-DO1/farm-management-system">Home</a></li>
             <li><a href="about.php">About</a></li>
-            <li><a href="inventory.php">Inventory</a></li>
-            <li><a href="settings.php">Settings</a></li>
+            <li><a href="views/dashboard/inventory.php">Inventory</a></li>
+            <li><a href="views/dashboard/settings.php">Settings</a></li>
         </ul>
     </nav>
     <section class="hero">
         <h1>Welcome to Your Farm Management System</h1>
         <p>Efficiently manage your crops, livestock, inventory, and more!</p>
         <div class="btn-group">
-            <a href="login.php" class="btn">Log In</a>
-            <a href="signup.php" class="btn">Sign Up</a>
+            <a href="views/auth/login.php" class="btn">Log In</a>
+            <a href="views/auth/register.php" class="btn">Sign Up</a>
         </div>
     </section>
     <section class="features-section">
