@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                  echo "<script>
                     alert('✅ Success! Welcome back, " . addslashes($user['username']) . ".');
-                    window.location.href = 'dashboard.php';
+                    window.location.href = 'index.dashboard.php';
                     </script>";
                 exit; 
             } else {
