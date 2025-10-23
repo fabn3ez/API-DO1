@@ -50,6 +50,12 @@ PHPMailer is available on [Packagist](https://packagist.org/packages/phpmailer/p
 json
 "phpmailer/phpmailer": "^7.0.0"
 
+<<<<<<< HEAD
+=======
+```json
+"phpmailer/phpmailer": "^6.12.0"
+```
+>>>>>>> ca8a24ffe8dc7a6a67edced9eabc55bdefef7d98
 
 or run
 

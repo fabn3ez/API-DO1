@@ -1,6 +1,10 @@
 {
     "require": {
+<<<<<<< HEAD
         "phpmailer/phpmailer": "^7.0"
+=======
+        "phpmailer/phpmailer": "^6.10"
+>>>>>>> ca8a24ffe8dc7a6a67edced9eabc55bdefef7d98
     },
 
     "autoload": {
@@ -8,4 +12,8 @@
         "FarmManagement\\": "src/"
     }
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> ca8a24ffe8dc7a6a67edced9eabc55bdefef7d98
