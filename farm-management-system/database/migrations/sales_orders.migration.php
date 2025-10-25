@@ -1,5 +1,5 @@
 <?php
-
+// Contribution by <Lovine>
 //create sales_orders table migration
 $mysqli = new mysqli("localhost", "root", "1234", "farm");
 
