@@ -1,10 +1,14 @@
 <?php
+require __DIR__ . '/../../../vendor/autoload.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 session_start(); // Start session to store login state
 
 // Database connection
 $host = 'localhost';
-$db_user = 'root';     // Change if necessary
-$db_pass = '1234';          // Add your MySQL password if any
+$db_user = 'root';
+$db_pass = '1234';
 $db_name = 'farm';
 
 $conn = new mysqli($host, $db_user, $db_pass, $db_name);
@@ -24,38 +28,75 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email']);
     $password = $_POST['password'];
 
-    // Validate input
     if (empty($email) || empty($password)) {
         $message = 'Error: Please enter both your email and password.';
         $message_type = 'error';
     } else {
-        // Prepare SQL to check if email exists
-        $stmt = $conn->prepare("SELECT id, username, password FROM users WHERE email = ?");
+        // Include email in query so we can use it later
+        $stmt = $conn->prepare("SELECT id, username, email, password FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result->num_rows === 1) {
-            // Email found, now verify password
             $user = $result->fetch_assoc();
 
             if (password_verify($password, $user['password'])) {
-                // Successful login
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['username'] = $user['username'];
+                // Generate 6-digit 2FA code
+                $code = rand(100000, 999999);
+                $expires = date('Y-m-d H:i:s', strtotime('+5 minutes'));
 
-                 echo "<script>
-                    alert('✅ Success! Welcome back, " . addslashes($user['username']) . ".');
-                    window.location.href = 'index.dashboard.php';
-                    </script>";
-                exit; 
+                // Save code in database
+                $update = $conn->prepare("UPDATE users SET two_factor_code = ?, two_factor_expires = ? WHERE id = ?");
+                $update->bind_param("ssi", $code, $expires, $user['id']);
+                $update->execute();
+
+                // Send 2FA email
+                $mail = new PHPMailer(true);
+                try {
+                    $mail->isSMTP();
+                    $mail->Host = 'smtp.gmail.com';
+                    $mail->SMTPAuth = true;
+                    $mail->Username = 'sirwoossah@gmail.com'; // your Gmail
+                    $mail->Password = 'trgl cuuq okpd bjuf'; // your Gmail App Password
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                    $mail->Port = 587;
+
+                    $mail->setFrom('sirwoossah@gmail.com', 'Farm Management System');
+                    $mail->addAddress($user['email'], $user['username']);
+
+                    $mail->isHTML(true);
+                    $mail->Subject = "Your Farm Management 2FA Verification Code";
+                    $username = htmlspecialchars($user['username']);
+                    $mail->Body = "
+                        <div style='font-family: Poppins, sans-serif; color: #333; background-color: #f8fff8; padding: 20px; border-radius: 10px;'>
+                            <h2 style='color: #388e3c;'>Hello $username,</h2>
+                            <p>Your login verification code is:</p>
+                            <h1 style='text-align:center; letter-spacing: 8px; color: #2e7d32;'>$code</h1>
+                            <p>This code will expire in <strong>5 minutes</strong>. Please do not share it with anyone.</p>
+                            <br>
+                            <p>Best regards,<br><strong>Farm Management Team 🌱</strong></p>
+                        </div>";
+                    $mail->AltBody = "Hello $username, your verification code is: $code (valid for 5 minutes).";
+
+                    $mail->send();
+
+                    // Store user ID for verification
+                    $_SESSION['temp_user_id'] = $user['id'];
+
+                    // Redirect to verify page
+                    header('Location: verify-2fa.php');
+                    exit;
+
+                } catch (Exception $e) {
+                    $message = "Could not send 2FA email. Error: {$mail->ErrorInfo}";
+                    $message_type = 'error';
+                }
             } else {
-                // Invalid password
                 $message = 'Invalid password. Please try again.';
                 $message_type = 'error';
             }
         } else {
-            // Email not found
             $message = 'No account found with that email.';
             $message_type = 'error';
         }
@@ -115,17 +156,9 @@ $conn->close();
             color: #c62828;
             border: 1px solid #ffcdd2;
         }
-        .form-group {
-            margin-bottom: 18px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #555;
-        }
-        input[type="email"],
-        input[type="password"] {
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #555; }
+        input[type="email"], input[type="password"] {
             width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
