@@ -88,7 +88,7 @@ try {
     }
     
     // Route the request
-    $authController = new AuthController();
+    // $authController = new AuthController();
     
     switch (true) {
         // API Routes
