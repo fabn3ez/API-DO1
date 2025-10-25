@@ -1,10 +1,12 @@
 <?php
-class Database {
+class Database
+{
     private $host;
     private $db_name;
     private $username;
     private $password;
     public $conn;
+
 
     // Initialize database configuration values
     public function __construct() {
@@ -14,18 +16,19 @@ class Database {
         $this->username = getenv('DB_USER') ?: 'root';
         $this->password = getenv('DB_PASS') ?: '1234';
     }
-    
-    public function getConnection() {
+
+    public function getConnection()
+    {
         $this->conn = null;
         try {
             $this->conn = new PDO(
-                "mysql:host=" . $this->host . ";dbname=" . $this->db_name, 
-                $this->username, 
+                "mysql:host=" . $this->host . ";dbname=" . $this->db_name,
+                $this->username,
                 $this->password
             );
             $this->conn->exec("set names utf8");
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch(PDOException $exception) {
+        } catch (PDOException $exception) {
             error_log("Connection error: " . $exception->getMessage());
             throw new Exception("Database connection failed");
         }
