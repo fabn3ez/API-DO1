@@ -6,7 +6,9 @@ class Database {
     private $password;
     public $conn;
 
+    // Initialize database configuration values
     public function __construct() {
+ 
         $this->host = getenv('DB_HOST') ?: 'localhost';
         $this->db_name = getenv('DB_NAME') ?: 'farm';
         $this->username = getenv('DB_USER') ?: 'root';
