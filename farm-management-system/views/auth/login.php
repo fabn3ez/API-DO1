@@ -13,10 +13,17 @@ $db_name = 'farm';
 
 $conn = new mysqli($host, $db_user, $db_pass, $db_name);
 
-// Check database connection
+// Check connection
 if ($conn->connect_error) {
     die("Database connection failed: " . $conn->connect_error);
 }
+
+// ✅ Ensure two-factor columns exist
+$conn->query("
+    ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS two_factor_code VARCHAR(6) DEFAULT NULL,
+    ADD COLUMN IF NOT EXISTS two_factor_expires DATETIME DEFAULT NULL
+");
 
 // Initialize variables
 $email = '';
@@ -32,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = 'Error: Please enter both your email and password.';
         $message_type = 'error';
     } else {
-        // Include email in query so we can use it later
+        // Check if user exists
         $stmt = $conn->prepare("SELECT id, username, email, password FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -41,12 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result->num_rows === 1) {
             $user = $result->fetch_assoc();
 
+            // Verify password
             if (password_verify($password, $user['password'])) {
                 // Generate 6-digit 2FA code
                 $code = rand(100000, 999999);
                 $expires = date('Y-m-d H:i:s', strtotime('+5 minutes'));
 
-                // Save code in database
+                // Save 2FA code in database
                 $update = $conn->prepare("UPDATE users SET two_factor_code = ?, two_factor_expires = ? WHERE id = ?");
                 $update->bind_param("ssi", $code, $expires, $user['id']);
                 $update->execute();
@@ -87,7 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Redirect to verify page
                     header('Location: verify-2fa.php');
                     exit;
-
                 } catch (Exception $e) {
                     $message = "Could not send 2FA email. Error: {$mail->ErrorInfo}";
                     $message_type = 'error';
