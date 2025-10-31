@@ -1,4 +1,10 @@
 <?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../auth/login.php");
+    exit();
+}
+
 require_once __DIR__ . '/../../controllers/FarmerController.php';
 
 $controller = new FarmerController();
@@ -16,6 +22,21 @@ $activity = $controller->getRecentActivity();
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../../UI/assets/css/farmer.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .logout-btn {
+      background: crimson;
+      color: white;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-left: 15px;
+    }
+    .logout-btn:hover {
+      background: darkred;
+    }
+  </style>
 </head>
 <body>
   <aside class="sidebar">
@@ -36,6 +57,7 @@ $activity = $controller->getRecentActivity();
       <h1 id="greeting">Welcome, Farmer</h1>
       <div>
         <button id="refreshBtn">Refresh</button>
+        <a href="../auth/logout.php" class="logout-btn">Logout</a>
       </div>
     </header>
 

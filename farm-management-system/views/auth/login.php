@@ -4,6 +4,10 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 session_start(); // Start session to store login state
+if (isset($_GET['redirect'])) {
+    $role = htmlspecialchars($_GET['redirect']);
+    echo "<p style='color: green; text-align:center;'>You have been logged out of your $role session.</p>";
+}
 
 // Database connection
 $host = 'localhost';
