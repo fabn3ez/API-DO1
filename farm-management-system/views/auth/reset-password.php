@@ -1,107 +1,74 @@
 <?php
 require __DIR__ . '/../../../vendor/autoload.php';
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
 session_start();
 
-// Database connection
 $host = 'localhost';
 $db_user = 'root';
 $db_pass = '1234';
 $db_name = 'farm';
-
 $conn = new mysqli($host, $db_user, $db_pass, $db_name);
 
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
-
-// Initialize variables
-$email = '';
 $message = '';
 $message_type = '';
+$valid_token = false;
+$token = '';
 
-// Check if form was submitted
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email']);
+// Check if token is provided
+if (isset($_GET['token'])) {
+    $token = $_GET['token'];
+    
+    // Validate token
+    $stmt = $conn->prepare("SELECT id, username FROM users WHERE reset_token = ? AND reset_expires > NOW()");
+    $stmt->bind_param("s", $token);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows === 1) {
+        $user = $result->fetch_assoc();
+        $valid_token = true;
+        $_SESSION['reset_user_id'] = $user['id'];
+    } else {
+        $message = 'Invalid or expired reset link. Please request a new one.';
+        $message_type = 'error';
+    }
+    $stmt->close();
+} else {
+    $message = 'No reset token provided.';
+    $message_type = 'error';
+}
+
+// Process password reset
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $valid_token) {
     $password = $_POST['password'];
-
-    if (empty($email) || empty($password)) {
-        $message = 'Please enter both your email and password.';
+    $confirm_password = $_POST['confirm_password'];
+    
+    if (empty($password) || empty($confirm_password)) {
+        $message = 'Please fill in both password fields.';
+        $message_type = 'error';
+    } elseif ($password !== $confirm_password) {
+        $message = 'Passwords do not match.';
+        $message_type = 'error';
+    } elseif (strlen($password) < 6) {
+        $message = 'Password must be at least 6 characters long.';
         $message_type = 'error';
     } else {
-        // Include role in query
-        $stmt = $conn->prepare("SELECT id, username, email, password, role FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows === 1) {
-            $user = $result->fetch_assoc();
-
-            if (password_verify($password, $user['password'])) {
-                // Generate 6-digit 2FA code
-                $code = rand(100000, 999999);
-                $expires = date('Y-m-d H:i:s', strtotime('+5 minutes'));
-
-                // Save code in database
-                $update = $conn->prepare("UPDATE users SET two_factor_code = ?, two_factor_expires = ? WHERE id = ?");
-                $update->bind_param("ssi", $code, $expires, $user['id']);
-                $update->execute();
-
-                // Send 2FA email
-                $mail = new PHPMailer(true);
-                try {
-                    $mail->isSMTP();
-                    $mail->Host = 'smtp.gmail.com';
-                    $mail->SMTPAuth = true;
-                    $mail->Username = 'sirwoossah@gmail.com';
-                    $mail->Password = 'trgl cuuq okpd bjuf';
-                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                    $mail->Port = 587;
-
-                    $mail->setFrom('sirwoossah@gmail.com', 'Farm Management System');
-                    $mail->addAddress($user['email'], $user['username']);
-
-                    $mail->isHTML(true);
-                    $mail->Subject = "Your Farm Management 2FA Verification Code";
-                    $username = htmlspecialchars($user['username']);
-                    $mail->Body = "
-                        <div style='font-family: Arial, sans-serif; color: #333; background-color: #f8fff8; padding: 20px; border-radius: 10px; border: 2px solid #8B4513;'>
-                            <h2 style='color: #228B22; text-align: center;'>🌱 Hello $username! 🌱</h2>
-                            <p>Your login verification code is:</p>
-                            <h1 style='text-align:center; letter-spacing: 8px; color: #228B22; font-size: 2.5rem; margin: 20px 0;'>$code</h1>
-                            <p>This code will expire in <strong>5 minutes</strong>. Please do not share it with anyone.</p>
-                            <br>
-                            <p>Best regards,<br><strong>Farm Management Team 🌾</strong></p>
-                        </div>";
-                    $mail->AltBody = "Hello $username, your verification code is: $code (valid for 5 minutes).";
-
-                    $mail->send();
-
-                    // Store user ID AND ROLE for verification
-                    $_SESSION['temp_user_id'] = $user['id'];
-                    $_SESSION['temp_user_role'] = $user['role'];
-
-                    // Redirect to verify page
-                    header('Location: verify-2fa.php');
-                    exit;
-
-                } catch (Exception $e) {
-                    $message = "Could not send 2FA email. Error: {$mail->ErrorInfo}";
-                    $message_type = 'error';
-                }
-            } else {
-                $message = 'Invalid password. Please try again.';
-                $message_type = 'error';
-            }
+        // Update password and clear reset token
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        $update = $conn->prepare("UPDATE users SET password = ?, reset_token = NULL, reset_expires = NULL WHERE id = ?");
+        $update->bind_param("si", $hashed_password, $_SESSION['reset_user_id']);
+        
+        if ($update->execute()) {
+            $message = '✅ Password reset successfully! You can now login with your new password.';
+            $message_type = 'success';
+            $valid_token = false; // Invalidate token after use
+            
+            // Clear session
+            unset($_SESSION['reset_user_id']);
         } else {
-            $message = 'No account found with that email.';
+            $message = 'Error resetting password. Please try again.';
             $message_type = 'error';
         }
-
-        $stmt->close();
+        $update->close();
     }
 }
 
@@ -113,7 +80,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Farm Management System</title>
+    <title>Reset Password - Farm Management System</title>
     <style>
         /* Farm Theme Styles */
         :root {
@@ -141,7 +108,7 @@ $conn->close();
             padding: 20px;
         }
         
-        .login-container {
+        .password-container {
             background: var(--cream-white);
             border-radius: 20px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.2);
@@ -151,7 +118,7 @@ $conn->close();
             border: 5px solid var(--earth-brown);
         }
         
-        .login-header {
+        .password-header {
             background: linear-gradient(to right, var(--forest-green), var(--earth-brown));
             color: white;
             text-align: center;
@@ -165,12 +132,12 @@ $conn->close();
             display: block;
         }
         
-        .login-header h1 {
+        .password-header h1 {
             font-size: 1.8rem;
             margin-bottom: 0.5rem;
         }
         
-        .login-form {
+        .password-form {
             padding: 2rem;
         }
         
@@ -230,19 +197,25 @@ $conn->close();
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         
-        .register-link {
+        .btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .login-link {
             text-align: center;
             margin-top: 1.5rem;
             color: var(--dark-brown);
         }
         
-        .register-link a {
+        .login-link a {
             color: var(--forest-green);
             text-decoration: none;
             font-weight: bold;
         }
         
-        .register-link a:hover {
+        .login-link a:hover {
             text-decoration: underline;
         }
         
@@ -279,64 +252,70 @@ $conn->close();
             color: var(--forest-green);
         }
         
-        .forgot-password {
-            text-align: right;
-            margin-top: 0.5rem;
+        .password-strength {
+            margin-top: 5px;
+            height: 5px;
+            border-radius: 5px;
+            background: #e0e0e0;
+            overflow: hidden;
         }
         
-        .forgot-password a {
-            color: var(--forest-green);
-            text-decoration: none;
-            font-size: 0.9rem;
+        .strength-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: all 0.3s ease;
         }
         
-        .forgot-password a:hover {
-            text-decoration: underline;
-        }
+        .weak { background: #ff4444; width: 33%; }
+        .medium { background: #ffaa00; width: 66%; }
+        .strong { background: #00c851; width: 100%; }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-header">
-            <span class="farm-icon">🔑</span>
-            <h1>Welcome Back to Your Farm</h1>
-            <p>Sign in to continue managing your farm</p>
+    <div class="password-container">
+        <div class="password-header">
+            <span class="farm-icon">🔄</span>
+            <h1>Create New Password</h1>
+            <p>Choose a strong, secure password</p>
         </div>
         
-        <div class="login-form">
+        <div class="password-form">
             <?php if (!empty($message)): ?>
                 <div class="alert alert-<?php echo $message_type === 'error' ? 'error' : 'success'; ?>">
                     <?php echo $message; ?>
                 </div>
             <?php endif; ?>
             
-            <form method="POST" action="">
-                <div class="form-group">
-                    <label for="email">📧 Email Address</label>
-                    <input type="email" id="email" name="email" class="form-control" 
-                           value="<?php echo isset($email) ? htmlspecialchars($email) : ''; ?>" 
-                           required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="password">🔒 Password</label>
-                    <div class="password-toggle">
-                        <input type="password" id="password" name="password" class="form-control" required>
-                        <span class="toggle-icon" id="togglePassword">👁️</span>
+            <?php if ($valid_token): ?>
+                <form method="POST" action="">
+                    <div class="form-group">
+                        <label for="password">🔒 New Password</label>
+                        <div class="password-toggle">
+                            <input type="password" id="password" name="password" class="form-control" required>
+                            <span class="toggle-icon" id="togglePassword">👁️</span>
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-fill weak" id="password-strength"></div>
+                        </div>
                     </div>
-                    <div class="forgot-password">
-                        <a href="forgot-password.php">Forgot your password?</a>
+                    
+                    <div class="form-group">
+                        <label for="confirm_password">✅ Confirm New Password</label>
+                        <div class="password-toggle">
+                            <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
+                            <span class="toggle-icon" id="toggleConfirmPassword">👁️</span>
+                        </div>
                     </div>
-                </div>
-                
-                <button type="submit" class="btn btn-primary">
-                    <span>🚜</span>
-                    <span>Sign In to Your Farm</span>
-                </button>
-            </form>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <span>🌱</span>
+                        <span>Reset Password</span>
+                    </button>
+                </form>
+            <?php endif; ?>
             
-            <div class="register-link">
-                Don't have an account? <a href="register.php">Join our farm community</a>
+            <div class="login-link">
+                <a href="login.php">Back to Login</a>
             </div>
         </div>
     </div>
@@ -350,7 +329,38 @@ $conn->close();
             this.textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
         });
 
-        // Add some interactive elements
+        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('confirm_password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
+        });
+
+        // Password strength indicator
+        document.getElementById('password').addEventListener('input', function(e) {
+            const password = e.target.value;
+            const strengthBar = document.getElementById('password-strength');
+            
+            let strength = 'weak';
+            if (password.length >= 8) strength = 'medium';
+            if (password.length >= 12 && /[!@#$%^&*(),.?":{}|<>]/.test(password)) strength = 'strong';
+            
+            strengthBar.className = 'strength-fill ' + strength;
+        });
+
+        // Confirm password validation
+        document.getElementById('confirm_password').addEventListener('input', function(e) {
+            const password = document.getElementById('password').value;
+            const confirm = e.target.value;
+            
+            if (confirm && password !== confirm) {
+                this.style.borderColor = '#ff4444';
+            } else {
+                this.style.borderColor = '#228B22';
+            }
+        });
+
+        // Add interactive elements
         document.addEventListener('DOMContentLoaded', function() {
             const inputs = document.querySelectorAll('.form-control');
             inputs.forEach(input => {

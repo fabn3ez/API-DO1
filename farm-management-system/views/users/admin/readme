@@ -1,0 +1,60 @@
+Core Admin Pages:
+dashboard.php - Main admin dashboard
+
+animals/
+
+animals_list.php - View all animals
+
+animal_add.php - Add new animal form
+
+animal_edit.php - Edit animal details
+
+animal_view.php - View animal details
+
+inventory/
+
+inventory_list.php - Stock management
+
+inventory_add.php - Add new inventory item
+
+financial/
+
+transactions.php - Income/expense records
+
+sales_orders.php - Sales & purchase orders
+
+reports.php - Financial reports
+
+users/
+
+users_list.php - Manage all users
+
+user_add.php - Add new user
+
+user_edit.php - Edit user details
+
+settings.php - System settings
+
+Admin Support Files:
+header.php - Admin header/navigation
+
+sidebar.php - Admin sidebar menu
+
+footer.php - Admin footer
+
+auth/
+
+login.php - Admin login
+
+logout.php - Logout functionality
+
+Admin API/Processing Files:
+process/
+
+process_animal.php - Handle animal CRUD operations
+
+process_user.php - Handle user management
+
+process_inventory.php - Handle inventory updates
+
+process_order.php - Handle sales orders
