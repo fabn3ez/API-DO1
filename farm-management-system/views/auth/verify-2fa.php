@@ -1,18 +1,11 @@
 <?php
 session_start();
-
-// Database connection
 $host = 'localhost';
 $db_user = 'root';
 $db_pass = '1234';
 $db_name = 'farm';
 $conn = new mysqli($host, $db_user, $db_pass, $db_name);
 
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
-
-// Redirect if no temp user (not coming from login)
 if (!isset($_SESSION['temp_user_id'])) {
     header('Location: login.php');
     exit;
@@ -22,36 +15,27 @@ $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $code = trim($_POST['code']);
-
-    // Get user info
     $stmt = $conn->prepare("SELECT id, username, two_factor_code, two_factor_expires FROM users WHERE id = ?");
     $stmt->bind_param("i", $_SESSION['temp_user_id']);
     $stmt->execute();
     $result = $stmt->get_result();
     $user = $result->fetch_assoc();
 
-    if ($user) {
-        $isCodeValid = $user['two_factor_code'] === $code;
-        $isNotExpired = strtotime($user['two_factor_expires']) > time();
+    if ($user && $user['two_factor_code'] === $code && strtotime($user['two_factor_expires']) > time()) {
+        // Success
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['username'] = $user['username'];
 
-        if ($isCodeValid && $isNotExpired) {
-            // ✅ Successful verification
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
+        // Clear code
+        $clear = $conn->prepare("UPDATE users SET two_factor_code = NULL, two_factor_expires = NULL WHERE id = ?");
+        $clear->bind_param("i", $user['id']);
+        $clear->execute();
 
-            // Clear OTP fields
-            $clear = $conn->prepare("UPDATE users SET two_factor_code = NULL, two_factor_expires = NULL WHERE id = ?");
-            $clear->bind_param("i", $user['id']);
-            $clear->execute();
-
-            unset($_SESSION['temp_user_id']);
-            header('Location: index.dashboard.php');
-            exit;
-        } else {
-            $message = "❌ Invalid or expired code. Please try again.";
-        }
+        unset($_SESSION['temp_user_id']);
+        header('Location: index.dashboard.php');
+        exit;
     } else {
-        $message = "⚠️ User not found. Please log in again.";
+        $message = "❌ Invalid or expired code. Please try again.";
     }
 }
 ?>
@@ -152,6 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-decoration: underline;
         }
 
+        /* Animations */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
@@ -184,17 +169,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <script>
-        // Auto-focus
+        // Focus input on load
         document.getElementById('code').focus();
 
-        // Countdown timer (5 minutes)
-        let timeLeft = 300;
+        // Simple countdown timer (5 minutes)
+        let timeLeft = 300; // seconds
         const countdownEl = document.getElementById('countdown');
 
         const timer = setInterval(() => {
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
-            countdownEl.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+            countdownEl.textContent = ${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')};
             timeLeft--;
 
             if (timeLeft < 0) {
@@ -210,11 +195,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             codeInput.value = codeInput.value.replace(/\D/g, '');
         });
 
-        // Resend code (we'll wire this later)
+        // Resend code (demo alert)
         function resendCode(e) {
             e.preventDefault();
-            alert('✅ A new verification code will be sent shortly.');
-            // Later: Use AJAX to trigger resend_otp.php
+            alert('A new verification code has been sent to your email.');
+            // You can trigger an AJAX call here to regenerate and resend the code.
         }
     </script>
 </body>

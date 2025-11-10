@@ -1,188 +1,201 @@
 <?php
-// register.php
+// =============================
+// DATABASE CONNECTION
+// =============================
+$host = 'localhost';
+$db_user = 'root';
+$db_pass = '1234';
+$db_name = 'farm';
 
-// Include database connection
-require_once "db_connect.php";
-require_once __DIR__ . '/../../database/db_connect.php';
+$conn = new mysqli($host, $db_user, $db_pass, $db_name);
 
-// Include PHPMailer classes
+if ($conn->connect_error) {
+    die("Database connection failed: " . $conn->connect_error);
+}
+
+// =============================
+// IMPORT PHPMailer
+// =============================
 use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-require 'PHPMailer/src/Exception.php';
-require 'PHPMailer/src/PHPMailer.php';
-require 'PHPMailer/src/SMTP.php';
+require __DIR__ . '/../../../vendor/autoload.php';
 
-// Start output buffering (for header redirection safety)
-ob_start();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Collect and sanitize inputs
+// =============================
+// INITIALIZE VARIABLES
+// =============================
+$username = '';
+$email = '';
+$message = '';
+$message_type = ''; // success or error
+
+// =============================
+// FORM SUBMISSION LOGIC
+// =============================
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
     $email = trim($_POST['email']);
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
 
-    // Basic validation
     if (empty($username) || empty($email) || empty($password) || empty($confirm_password)) {
-        $error = "⚠️ Please fill in all fields.";
+        $message = 'Please fill in all fields.';
+        $message_type = 'error';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = "⚠️ Invalid email format.";
+        $message = 'Invalid email address.';
+        $message_type = 'error';
     } elseif ($password !== $confirm_password) {
-        $error = "⚠️ Passwords do not match.";
+        $message = 'Error: Passwords do not match.';
+        $message_type = 'error';
     } else {
-        try {
-            // Check if email already exists
-            $checkStmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
-            $checkStmt->bind_param("s", $email);
-            $checkStmt->execute();
-            $result = $checkStmt->get_result();
+        // Check if email already exists
+        $check_query = $conn->prepare("SELECT id FROM users WHERE email = ?");
+        $check_query->bind_param("s", $email);
+        $check_query->execute();
+        $check_query->store_result();
 
-            if ($result->num_rows > 0) {
-                $error = "⚠️ Email already registered.";
-            } else {
-                // Hash password and assign default role
-                $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-                $role = 'user';
+        if ($check_query->num_rows > 0) {
+            $message = 'Error: Email already registered.';
+            $message_type = 'error';
+        } else {
+            // Hash password and insert new user
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
+            $stmt->bind_param("sss", $username, $email, $hashed_password);
 
-                // Insert new user
-                $stmt = $conn->prepare("INSERT INTO users (username, email, password, role, created_at) VALUES (?, ?, ?, ?, NOW())");
-                $stmt->bind_param("ssss", $username, $email, $hashed_password, $role);
+            if ($stmt->execute()) {
+                // =============================
+                // SEND EMAIL TO NEW USER
+                // =============================
+                $mail = new PHPMailer(true);
 
-                if ($stmt->execute()) {
-                    // Send welcome email
-                    $mail = new PHPMailer(true);
-                    try {
-                        $mail->isSMTP();
-                        $mail->Host = 'smtp.gmail.com';
-                        $mail->SMTPAuth = true;
-                        $mail->Username = 'yourgmail@gmail.com'; // Change to your Gmail
-                        $mail->Password = 'your-app-password'; // Use Gmail App Password
-                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                        $mail->Port = 587;
+                try {
+                    // SMTP SETTINGS
+                    $mail->isSMTP();
+                    $mail->Host       = 'smtp.gmail.com'; // Use your mail host
+                    $mail->SMTPAuth   = true;
+                    $mail->Username   = 'sirwoossah@gmail.com'; // your sender email
+                    $mail->Password   = 'hrfv ksao fhyk hwgm';    // use app password if Gmail
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                    $mail->Port       = 465;
 
-                        $mail->setFrom('yourgmail@gmail.com', 'Farm Management System');
-                        $mail->addAddress($email, $username);
+                    // RECIPIENTS
+                    $mail->setFrom('sirwoossah@gmail.com', 'Farm Management System');
+                    $mail->addAddress($email, $username);
+                    //$mail->addReplyTo('elizabeth.githiri@strathmore.edu', 'Farm Management Support');
 
-                        $mail->isHTML(true);
-                        $mail->Subject = 'Welcome to the Farm Management System 🌱';
-                        $mail->Body = "
-                            <h3>Hello, $username!</h3>
-                            <p>Welcome to the <strong>Farm Management System</strong>.</p>
-                            <p>You can now <a href='login.php'>log in</a> and start managing your farm data efficiently.</p>
-                            <p>— The FMS Team</p>
-                        ";
+                    // EMAIL CONTENT
+                    $mail->isHTML(true);
+                    $mail->Subject = "Welcome to Farm Management System!";
+                    $mail->Body = "
+                    <div style='font-family: Poppins, sans-serif; color: #333; background-color: #f8fff8; padding: 20px; border-radius: 10px;'>
+                        <h2 style='color: #388e3c;'>Welcome to Farm Management System, $username!</h2>
+                        <p>We’re thrilled to have you on board. 🎉</p>
+                        <p>You can now log in to your account and start managing your farm activities efficiently.</p>
+                        <br>
+                        <a href='http://localhost/API-DO1/farm-management-system/views/auth/login.php' 
+                            style='display:inline-block; background-color:#388e3c; color:white; padding:10px 20px; border-radius:8px; text-decoration:none;'>
+                            Login to Your Account
+                        </a>
+                        <br><br>
+                        <p>Best regards,<br><strong>The Farm Management Team 🌱</strong></p>
+                    </div>";
+                    $mail->AltBody = "Welcome to Farm Management System, $username! You can now log in and start managing your farm activities.";
 
-                        $mail->send();
-                    } catch (Exception $e) {
-                        // Silent fail for email (not critical)
-                    }
-
-                    $success = "✅ Registration successful! A confirmation email has been sent to $email.";
-                } else {
-                    $error = "❌ Error: Registration failed, please try again.";
+                    $mail->send();
+                    echo "<script>
+                        alert('✅ Registration successful! A welcome email has been sent.');
+                        window.location.href = 'login.php';
+                    </script>";
+                    exit;
+                } catch (Exception $e) {
+                    echo "<script>
+                        alert('Registration successful, but email could not be sent: {$mail->ErrorInfo}');
+                        window.location.href = 'login.php';
+                    </script>";
+                    exit;
                 }
-
-                $stmt->close();
+            } else {
+                $message = 'Error: Could not register user. Please try again.';
+                $message_type = 'error';
             }
 
-            $checkStmt->close();
-        } catch (Exception $e) {
-            $error = "⚠️ Something went wrong: " . $e->getMessage();
+            $stmt->close();
         }
+        $check_query->close();
     }
 }
 
 $conn->close();
 ?>
 
+<!-- 
+=============================
+HTML FORM (same as before)
+============================= 
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>User Registration | Farm Management System</title>
-  <link rel="stylesheet" href="assets/css/style.css">
-  <style>
-    body {
-      background: #f0f8f5;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .register-container {
-      background: #fff;
-      border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      width: 380px;
-    }
-    .register-container h2 {
-      text-align: center;
-      color: #2b7a0b;
-      margin-bottom: 20px;
-    }
-    label {
-      font-weight: bold;
-      color: #444;
-    }
-    input[type="text"], input[type="email"], input[type="password"] {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0 16px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      background: #2b7a0b;
-      color: white;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #249106;
-    }
-    .message {
-      margin-top: 10px;
-      text-align: center;
-      font-weight: bold;
-    }
-    .error { color: #c00; }
-    .success { color: #2b7a0b; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Register | Farm Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e0ffe0 0%, #c8e6c9 100%);
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: #fff; padding: 30px 40px; border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 400px;
+        }
+        h2 { text-align: center; color: #388e3c; margin-bottom: 25px; font-weight: 700; }
+        .message { padding: 10px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: 600; }
+        .message.success { background-color: #e8f5e9; color: #2e7d32; }
+        .message.error { background-color: #ffebee; color: #c62828; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
+        button { width: 100%; padding: 12px; background: #388e3c; color: #fff; border: none; border-radius: 8px; font-weight: 600; }
+        button:hover { background: #2e7d32; }
+        .link-text { text-align: center; margin-top: 20px; font-size: 0.9rem; }
+        .link-text a { color: #388e3c; font-weight: 600; text-decoration: none; }
+        .link-text a:hover { text-decoration: underline; }
+    </style>
 </head>
 <body>
-  <div class="register-container">
-    <h2>🧑‍🌾 Register Account</h2>
-
-    <?php if (isset($error)): ?>
-      <p class="message error"><?= $error ?></p>
-    <?php elseif (isset($success)): ?>
-      <p class="message success"><?= $success ?></p>
-    <?php endif; ?>
-
-    <form method="POST" action="">
-      <label for="username">Full Name:</label>
-      <input type="text" id="username" name="username" required>
-
-      <label for="email">Email Address:</label>
-      <input type="email" id="email" name="email" required>
-
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required>
-
-      <label for="confirm_password">Confirm Password:</label>
-      <input type="password" id="confirm_password" name="confirm_password" required>
-
-      <button type="submit">Register</button>
-    </form>
-
-    <p style="text-align:center; margin-top:10px;">Already have an account? <a href="login.php">Login here</a></p>
-  </div>
+    <div class="container">
+        <h2>🚜 Create Account</h2>
+        <?php if (!empty($message)): ?>
+            <div class="message <?= $message_type ?>"><?= $message ?></div>
+        <?php endif; ?>
+        <form method="POST">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" value="<?= htmlspecialchars($username) ?>" required>
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" value="<?= htmlspecialchars($email) ?>" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" name="confirm_password" required>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+        <div class="link-text">
+            Already have an account? <a href="login.php">Log In</a>
+        </div>
+    </div>
 </body>
 </html>
