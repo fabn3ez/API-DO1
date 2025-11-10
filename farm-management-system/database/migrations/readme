@@ -1,0 +1,18 @@
+Caution: All migrations work perfectly if you only use this
+
+Use this instead this one;
+
+# Step 1: Core System Tables
+ users.migration.php
+ animals.migration.php
+ inventory.migration.php
+ transactions.migration.php
+ sales_orders.migration.php
+ animal_health.migration.php
+
+# Step 2: Customer Extension Tables
+ customers.migration.php
+ customer_addresses.migration.php
+ customer_wishlist.migration.php
+ customer_reviews.migration.php
+

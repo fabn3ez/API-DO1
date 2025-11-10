@@ -1,0 +1,50 @@
+yo samuel and lovine this is your readme for farmer
+ *ensure you name the files exactly as indicated below for proper functionality*
+ *ensure the same aesthetic and layout is maintained across all files*
+ *this is due tomorrow morning 2pm sharp*
+ *reach out if you need any clarifications*
+ *make sure you run the animal_health migration to create the health records table in the
+  database before implementing health management features*
+
+  *Happy coding!*
+# Farmer Views - Readme
+
+# dashboard.php - ✅ Already created
+
+# animals.php - ✅ Already created - View all animals
+
+# add_animal.php - ✅ Already created - Add new animal form
+
+# view_animal.php - ✅ Already created - View animal details
+
+# edit_animal.php - Edit existing animal details
+
+# delete_animal.php - Delete animal (with confirmation)
+
+# Health & Care Management:
+# health.php - Animal health records dashboard
+
+# add_health_record.php - Add health/vaccination record
+
+# vaccination_schedule.php - Vaccination schedule and reminders
+
+# Shed & Housing Management:
+# sheds.php - Shed management overview
+
+# shed_details.php - View specific shed details
+
+# add_shed.php - Add new shed
+
+# Reports & Analytics:
+# reports.php - Farm reports dashboard
+
+# animal_report.php - Animal population reports
+
+# health_report.php - Health and vaccination reports
+
+# production_report.php - Production and yield reports
+
+# Profile & Settings:
+# profile.php - Farmer profile management
+
+# settings.php - Farmer settings and preferences

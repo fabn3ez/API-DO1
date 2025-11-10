@@ -1,0 +1,63 @@
+# Brother, so this is what you will do, 
+
+<!--
+dashboard.php - Customer dashboard with orders and products
+
+products.php - Browse available animals/products
+
+product_details.php - View detailed product/animal information
+
+cart.php - Shopping cart management
+
+checkout.php - Order checkout process
+
+Order Management:
+orders.php - View order history and status
+
+order_details.php - View specific order details
+
+track_order.php - Track order delivery/status
+
+cancel_order.php - Cancel order request
+
+Purchasing & Payments:
+purchase_history.php - Complete purchase history
+
+payment_methods.php - Manage payment methods
+
+invoices.php - View and download invoices
+
+receipts.php - View payment receipts
+
+Customer Support:
+support.php - Customer support and help center
+
+contact_farm.php - Contact farm/seller
+
+faq.php - Frequently asked questions
+
+Profile & Account:
+profile.php - Customer profile management
+
+address_book.php - Manage delivery addresses
+
+preferences.php - Customer preferences and settings
+
+notifications.php - Notification settings
+
+Wishlist & Favorites:
+wishlist.php - Saved animals/products wishlist
+
+favorites.php - Favorite products/farms
+
+Reviews & Ratings:
+reviews.php - Customer reviews and ratings
+
+write_review.php - Write review for purchased items
+
+Supporting Files: this is to be added in includes
+header.php - Customer header component
+
+sidebar.php - Customer sidebar navigation
+
+footer.php - Customer footer component -->
