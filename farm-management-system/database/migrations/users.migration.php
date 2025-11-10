@@ -22,6 +22,9 @@ id INT AUTO_INCREMENT PRIMARY KEY,
     locked_until DATETIME NULL,
     last_login DATETIME NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   
+ two_factor_code VARCHAR(10) DEFAULT NULL,
+ two_factor_expires DATETIME DEFAULT NULL
             
 )";
 if ($mysqli->query($sql) === TRUE) {
