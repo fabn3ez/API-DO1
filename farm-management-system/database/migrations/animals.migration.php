@@ -19,7 +19,8 @@ $sql = "CREATE TABLE IF NOT EXISTS animals (
             gender VARCHAR(255) NOT NULL,
             number INT NOT NULL,
             avg_weight VARCHAR(255) NOT NULL,
-            shed_no VARCHAR (255) NOT NULL
+            shed_no VARCHAR (255) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )";
 if ($mysqli->query($sql) === TRUE) {
     echo "Table 'animals' created successfully.\n";

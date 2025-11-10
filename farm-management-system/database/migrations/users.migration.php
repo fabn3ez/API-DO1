@@ -21,13 +21,12 @@ id INT AUTO_INCREMENT PRIMARY KEY,
     login_attempts INT DEFAULT 0,
     locked_until DATETIME NULL,
     last_login DATETIME NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-   
- two_factor_code VARCHAR(10) DEFAULT NULL,
- two_factor_expires DATETIME DEFAULT NULL
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    two_factor_code VARCHAR(10) DEFAULT NULL,
+    two_factor_expires DATETIME DEFAULT NULL
             
 )";
-if ($mysqli->query($sql) === TRUE) {
+ if ($mysqli->query($sql) === TRUE) {
     echo "Table 'users' created successfully.\n";
 } else {
     echo "Error creating table: " . $mysqli->error . "\n";

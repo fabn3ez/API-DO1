@@ -42,10 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'admin':
             header('Location: /API-DO1/farm-management-system/views/users/admin/dashboard.php');
             break;
-            case 'manager': // customer
+            case 'customer': // customer
             header('Location: /API-DO1/farm-management-system/views/users/customer/dashboard.php');
             break;
-            case 'field_worker': // farmer
+            case 'farmer': // farmer
             header('Location: /API-DO1/farm-management-system/views/users/farmer/dashboard.php');
             break;
             default:
