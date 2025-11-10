@@ -11,7 +11,7 @@ if ($mysqli->connect_error) {
 $mysqli->query("CREATE DATABASE IF NOT EXISTS farm");
 $mysqli->select_db("farm");
 // Create animal_health table
-$sql = "CREATE TABLE animal_health (
+$sql = "CREATE TABLE IF NOT EXISTS animal_health (
     id INT AUTO_INCREMENT PRIMARY KEY,
     animal_id INT NOT NULL,
     health_event ENUM('vaccination', 'treatment', 'checkup', 'sickness') NOT NULL,
@@ -22,7 +22,7 @@ $sql = "CREATE TABLE animal_health (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ";
- if ($mysqli->query($sql) === TRUE) {
+if ($mysqli->query($sql) === TRUE) {
     echo "Table 'animal health' created successfully.\n";
 } else {
     echo "Error creating table: " . $mysqli->error . "\n";
