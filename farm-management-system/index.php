@@ -1,580 +1,500 @@
 <?php
-/**
- * Farm Management System - Main Application Entry Point
- * 
- * @package FarmManagementSystem
- * @version 1.0.0
- */
-
-// Display errors if in development mode
-if (getenv('APP_ENV') === 'development' || (isset($_ENV['APP_DEBUG']) && $_ENV['APP_DEBUG'] === 'true')) {
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
-}
-
-// Set default timezone
-date_default_timezone_set('UTC');
-
-// Composer autoloader
-    require_once __DIR__ . '/../vendor/autoload.php';
-    /*
-     * Ensure Composer dependencies are installed.
-     * Run this command in your project root (where composer.json is located):
-     *
-     *     composer install
-     *
-     * This will create the 'vendor' folder and install all required packages.
-     */
-require_once __DIR__ . '/config/db.php';
-// Remove or adjust the namespace if Database.php does not declare it
-require_once __DIR__ . '/controllers/AuthController.php';
-use FarmManagement\Controllers\AuthController;
-
-// Manually require ErrorHandler if autoload is not working
-if (!class_exists('FarmManagement\\Utils\\ErrorHandler')) {
-    require_once __DIR__ . '/utils/ErrorHandler.php';
-}
-use FarmManagement\Utils\ErrorHandler;
-
-// Register error handlers
-//set_exception_handler(['FarmManagement\\Utils\\ErrorHandler', 'handleException']);
-//set_error_handler(['FarmManagement\\Utils\\ErrorHandler', 'handleError']);
-
-// CORS headers for API requests
-header("Access-Control-Allow-Origin: " . ($_ENV['ALLOWED_ORIGINS'] ?? '*'));
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-header("Access-Control-Allow-Credentials: true");
-header("Content-Type: application/json; charset=UTF-8");
-
-// Handle preflight OPTIONS requests
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
-
-// Security headers
-header("X-Content-Type-Options: nosniff");
-header("X-Frame-Options: DENY");
-header("X-XSS-Protection: 1; mode=block");
-header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
-
-try {
-    // Parse request URL and method
-    $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    $requestMethod = $_SERVER['REQUEST_METHOD'];
-    $queryString = $_SERVER['QUERY_STRING'] ?? '';
-    
-    // Remove base path if application is in a subdirectory
-    $basePaths = ['/API-DO1/farm-management-system', '/farm-management-system'];
-    foreach ($basePaths as $basePath) {
-        if (strpos($requestUri, $basePath) === 0) {
-            $requestUri = substr($requestUri, strlen($basePath));
-        }
+session_start();
+// Check if user is logged in, redirect to appropriate dashboard
+if (isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
+    switch($_SESSION['user_role']) {
+        case 'admin':
+            header('Location: views/users/admin/dashboard.php');
+            exit;
+        case 'farmer':
+            header('Location: views/users/farmer/dashboard.php');
+            exit;
+        case 'customer':
+            header('Location: views/users/customer/dashboard.php');
+            exit;
     }
-    
-    // Remove trailing slash
-    $requestUri = rtrim($requestUri, '/');
-    
-    // If empty request, default to root
-    if (empty($requestUri) || $requestUri === '') {
-        $requestUri = '/';
-    }
-    
-    // Log the request (for debugging)
-    if (getenv('APP_DEBUG') === 'true') {
-        error_log("Request: $requestMethod $requestUri");
-    }
-    
-    // Route the request
-    // $authController = new AuthController();
-    
-    switch (true) {
-        // API Routes
-        case $requestUri === '/api/register' && $requestMethod === 'POST':
-            $authController->register();
-            break;
-            
-        case $requestUri === '/api/login' && $requestMethod === 'POST':
-            $authController->login();
-            break;
-            
-        case $requestUri === '/api/verify-2fa' && $requestMethod === 'POST':
-            $authController->verify2FA();
-            break;
-            
-        case $requestUri === '/api/logout' && $requestMethod === 'POST':
-            $authController->logout();
-            break;
-            
-        case $requestUri === '/api/validate-token' && $requestMethod === 'GET':
-            $authController->validateToken();
-            break;
-            
-        case $requestUri === '/api/enable-2fa' && $requestMethod === 'POST':
-            $authController->enable2FA();
-            break;
-            
-        case $requestUri === '/api/disable-2fa' && $requestMethod === 'POST':
-            $authController->disable2FA();
-            break;
-            
-        case $requestUri === '/api/me' && $requestMethod === 'GET':
-            $authController->getCurrentUser();
-            break;
-            
-        // Web Routes
-        case $requestUri === '/register' && $requestMethod === 'GET':
-            serveStaticPage('register');
-            break;
-        case $requestUri === '/login' && $requestMethod === 'GET':
-            serveStaticPage('login');
-            break;
-        case $requestUri === '/verify-2fa' && $requestMethod === 'GET':
-            serveStaticPage('verify-2fa');
-            break;
-        case $requestUri === '/dashboard' && $requestMethod === 'GET':
-            serveStaticPage('dashboard');
-            break;
-        case $requestUri === '/' && $requestMethod === 'GET':
-            serveWelcomePage();
-            break;
-        // Static asset routes
-        case preg_match('/\.(css|js|png|jpg|jpeg|gif|ico|svg)$/i', $requestUri):
-            serveStaticAsset($requestUri);
-            break;
-        // Health check endpoint
-        case $requestUri === '/api/health' && $requestMethod === 'GET':
-            healthCheck();
-            break;
-        // Database test endpoint
-        case $requestUri === '/api/test-db' && $requestMethod === 'GET':
-            testDatabase();
-            break;
-        default:
-            handleNotFound($requestUri);
-            break;
-    }
-    
-} catch (Throwable $e) {
-    ErrorHandler::handleException($e);
 }
+?>
 
-/**
- * Serve welcome page
- */
-function serveWelcomePage() {
-    if (isApiRequest()) {
-        echo json_encode([
-            'success' => true,
-            'message' => 'Farm Management System API',
-            'version' => '1.0.0',
-            'endpoints' => [
-                'POST /api/register' => 'User registration',
-                'POST /api/login' => 'User login',
-                'POST /api/verify-2fa' => 'Verify 2FA code',
-                'POST /api/logout' => 'User logout',
-                'GET /api/validate-token' => 'Validate JWT token',
-                'GET /api/health' => 'System health check'
-            ]
-        ]);
-    } else {
-        header('Content-Type: text/html');
-        echo <<<HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Farm Management System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Management System - Home</title>
     <style>
-        body {
-            margin: 0;
-            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e0ffe0 0%, #e0f7fa 100%);
-            color: #2c3e50;
+        /* Farm Theme Styles */
+        :root {
+            --forest-green: #228B22;
+            --earth-brown: #8B4513;
+            --sky-blue: #87CEEB;
+            --cream-white: #FFFDD0;
+            --wheat: #F5DEB3;
+            --dark-brown: #3E2723;
         }
-        .navbar {
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--forest-green), var(--sky-blue));
+            min-height: 100vh;
+            color: var(--dark-brown);
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(to right, var(--forest-green), var(--earth-brown));
+            color: white;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 3rem;
-            background: #388e3c;
-            color: #fff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-        .navbar .logo {
-            font-size: 1.6rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-        .navbar ul {
-            list-style: none;
+
+        .logo {
             display: flex;
-            gap: 1.5rem;
-            margin: 0;
-            padding: 0;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
         }
-        .navbar ul li a {
-            text-decoration: none;
-            color: #fff;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-        .navbar ul li a:hover {
-            color: #e0ffe0;
-        }
-        .hero {
-            width: 100%;
-            background: linear-gradient(90deg, #388e3c 0%, #43a047 100%);
-            color: #fff;
-            padding: 60px 0 40px 0;
-            text-align: center;
-        }
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-        }
-        .hero p {
-            font-size: 1.3rem;
-            margin-bottom: 1.5rem;
-        }
-        .hero .btn-group {
-            margin-top: 1.5rem;
-        }
-        .hero .btn {
-            background-color: #fff;
-            color: #388e3c;
-            padding: 14px 32px;
-            margin: 0 8px;
-            border: none;
-            border-radius: 30px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 1.1rem;
-            box-shadow: 0 2px 8px rgba(56,142,60,0.12);
-            transition: 0.3s;
-        }
-        .hero .btn:hover {
-            background-color: #e0ffe0;
-            color: #2c3e50;
-        }
-        .features-section {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 40px 0 60px 0;
-        }
-        .features-title {
-            text-align: center;
-            font-size: 2.2rem;
-            color: #388e3c;
-            margin-bottom: 2rem;
-            font-weight: 700;
-        }
-        .feature-cards {
+
+        .nav-links {
             display: flex;
             gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--cream-white);
+            color: var(--forest-green);
+        }
+
+        .btn-primary:hover {
+            background: var(--wheat);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 80vh;
+        }
+
+        .hero-content {
+            flex: 1;
+            padding-right: 2rem;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: var(--cream-white);
+            line-height: 1.6;
+        }
+
+        .hero-image {
+            flex: 1;
+            text-align: center;
+            font-size: 15rem;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Features Section */
+        .features {
+            background: var(--cream-white);
+            padding: 4rem 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--forest-green);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--forest-green);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--forest-green);
+        }
+
+        .feature-description {
+            color: var(--dark-brown);
+            line-height: 1.6;
+        }
+
+        /* Role Selection */
+        .roles {
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, var(--earth-brown), var(--forest-green));
+            color: white;
+        }
+
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .role-card {
+            background: rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .role-card:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.05);
+        }
+
+        .role-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .role-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .role-description {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        /* Authentication Section */
+        .auth-section {
+            background: var(--cream-white);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
             justify-content: center;
             flex-wrap: wrap;
+            margin-top: 2rem;
         }
-        .feature-card {
-            flex: 1 1 220px;
-            max-width: 260px;
-            background: #fff;
-            border-radius: 18px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.07);
-            padding: 2rem 1.2rem;
+
+        .btn-large {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+        }
+
+        .btn-success {
+            background: var(--forest-green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: var(--earth-brown);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark-brown);
+            color: var(--cream-white);
+            padding: 2rem;
             text-align: center;
-            color: #388e3c;
-            transition: transform 0.25s, box-shadow 0.25s;
-            position: relative;
         }
-        .feature-card:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow: 0 12px 36px rgba(56,142,60,0.15);
-        }
-        .feature-card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 0.7rem;
-            font-weight: 600;
-        }
-        .feature-card ul {
-            padding: 0;
-            margin: 1rem 0;
-            font-size: 1rem;
-            list-style: none;
-        }
-        .feature-card li {
-            margin: 0.5rem 0;
-            text-align: left;
-            padding-left: 1.2rem;
-            position: relative;
-        }
-        .feature-card li.crops::before { content: "🌾 "; position: absolute; left: 0; }
-        .feature-card li.livestock::before { content: "🐄 "; position: absolute; left: 0; }
-        .feature-card li.inventory::before { content: "📦 "; position: absolute; left: 0; }
-        .feature-card li.reports::before { content: "📊 "; position: absolute; left: 0; }
-        .feature-card li.users::before { content: "👤 "; position: absolute; left: 0; }
-        .feature-card li.settings::before { content: "⚙️ "; position: absolute; left: 0; }
-        @media (max-width: 900px) {
-            .feature-cards {
-                flex-direction: column;
-                gap: 1.5rem;
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
             }
-            .features-section {
-                padding: 1.5rem;
+            50% {
+                transform: translateY(-20px);
             }
-            .navbar {
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero {
                 flex-direction: column;
+                text-align: center;
+                padding: 2rem 1rem;
+            }
+
+            .hero-content {
+                padding-right: 0;
+                margin-bottom: 2rem;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-image {
+                font-size: 8rem;
+            }
+
+            .nav-links {
                 gap: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">🚜 Farm Management</div>
-        <ul>
-            <li><a href="/API-DO1/farm-management-system">Home</a></li>
-            <li><a href="about.php">About</a></li>
-            <li><a href="views/dashboard/inventory.php">Inventory</a></li>
-            <li><a href="views/dashboard/settings.php">Settings</a></li>
-        </ul>
-    </nav>
-    <section class="hero">
-        <h1>Welcome to Your Farm Management System</h1>
-        <p>Efficiently manage your crops, livestock, inventory, and more!</p>
-        <div class="btn-group">
-            <a href="views/auth/login.php" class="btn">Log In</a>
-            <a href="views/auth/register.php" class="btn">Sign Up</a>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <span>🚜</span>
+            <span>FARM MANAGEMENT SYSTEM</span>
         </div>
-    </section>
-    <section class="features-section">
-        <div class="features-title">Farm Features</div>
-        <div class="feature-cards">
-            <div class="feature-card">
-                <h3>Livestock</h3>
-                <ul>
-                    <li class="livestock">Manage animal records</li>
-                    <li class="livestock">Track breeding & health</li>
-                    <li class="livestock">Monitor feed & production</li>
-                </ul>
-            </div>
-            <div class="feature-card">
-                <h3>Inventory</h3>
-                <ul>
-                    <li class="inventory">Supplies & equipment</li>
-                    <li class="inventory">Stock levels</li>
-                    <li class="inventory">Usage history</li>
-                </ul>
-            </div>
-            <div class="feature-card">
-                <h3>Reports</h3>
-                <ul>
-                    <li class="reports">Production reports</li>
-                    <li class="reports">Sales & expenses</li>
-                    <li class="reports">Performance analytics</li>
-                </ul>
-            </div>
-            <div class="feature-card">
-                <h3>Users</h3>
-                <ul>
-                    <li class="users">User management</li>
-                    <li class="users">Roles & permissions</li>
-                </ul>
-            </div>
-            <div class="feature-card">
-                <h3>Settings</h3>
-                <ul>
-                    <li class="settings">System configuration</li>
-                    <li class="settings">Notifications</li>
-                </ul>
-            </div>
+        <div class="nav-links">
+            <a href="#features" class="nav-link">Features</a>
+            <a href="#roles" class="nav-link">Roles</a>
+            <a href="#auth" class="nav-link">Get Started</a>
         </div>
-    </section>
-</body>
-</html>
-HTML;
-    }
-}
-
-
-
-
-/**
- * Serve static pages
- */
-function serveStaticPage($page) {
-    $pageFile = __DIR__ . "/views/auth/{$page}.php";
-    
-    if (file_exists($pageFile)) {
-        header('Content-Type: text/html');
-        include $pageFile;
-    } else {
-        // Fallback to basic HTML if view file doesn't exist
-        header('Content-Type: text/html');
-        echo <<<HTML
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Farm Management System - {$page}</title>
-    <link rel="stylesheet" href="/assets/css/style.css">
-</head>
-<body>
-    <div style="padding: 20px; text-align: center;">
-        <h1>Farm Management System</h1>
-        <h2>{$page} Page</h2>
-        <p>This page is under construction. View file: views/auth/{$page}.php</p>
-        <a href="/">← Back to Home</a>
     </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">🌾 Welcome to Your Digital Farm 🌾</h1>
+            <p class="hero-subtitle">
+                Streamline your farm operations with our comprehensive management system. 
+                Track animals, manage inventory, handle sales, and make data-driven decisions 
+                to grow your agricultural business efficiently.
+            </p>
+            <div class="auth-buttons">
+                <a href="views/auth/register.php" class="btn btn-primary btn-large">
+                    <span>🌱</span>
+                    <span>Get Started Free</span>
+                </a>
+                <a href="views/auth/login.php" class="btn btn-success btn-large">
+                    <span>🔑</span>
+                    <span>Sign In</span>
+                </a>
+            </div>
+        </div>
+        <div class="hero-image">
+            🚜
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <h2 class="section-title">✨ Key Features</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🐄</div>
+                <h3 class="feature-title">Animal Management</h3>
+                <p class="feature-description">
+                    Track all your livestock with detailed records including breed, 
+                    health status, location, and population statistics.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📦</div>
+                <h3 class="feature-title">Inventory Control</h3>
+                <p class="feature-description">
+                    Manage farm supplies, equipment, and feed with real-time 
+                    stock monitoring and automated alerts.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h3 class="feature-title">Financial Tracking</h3>
+                <p class="feature-description">
+                    Monitor income, expenses, sales orders, and generate 
+                    comprehensive financial reports.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3 class="feature-title">Analytics & Reports</h3>
+                <p class="feature-description">
+                    Make informed decisions with detailed analytics, 
+                    charts, and customizable reports.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3 class="feature-title">Multi-Role Access</h3>
+                <p class="feature-description">
+                    Secure role-based access for administrators, farmers, 
+                    and customers with appropriate permissions.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3 class="feature-title">Secure & Reliable</h3>
+                <p class="feature-description">
+                    Enterprise-grade security with two-factor authentication 
+                    and regular data backups.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Role Selection Section -->
+    <section class="roles" id="roles">
+        <h2 class="section-title" style="color: white;">🎭 Choose Your Role</h2>
+        <div class="roles-grid">
+            </div>
+            <div class="role-card">
+                <div class="role-icon">👨‍🌾</div>
+                <h3 class="role-title">Farmer</h3>
+                <p class="role-description">
+                    Manage your animals, track health records, 
+                    monitor inventory, and generate farm reports.
+                </p>
+                <a href="views/auth/register.php?role=farmer" class="btn btn-primary">
+                    Join as Farmer
+                </a>
+            </div>
+            <div class="role-card">
+                <div class="role-icon">🛒</div>
+                <h3 class="role-title">Customer</h3>
+                <p class="role-description">
+                    Browse available animals, place orders, 
+                    track purchases, and manage your account.
+                </p>
+                <a href="views/auth/register.php?role=customer" class="btn btn-primary">
+                    Join as Customer
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Authentication Section -->
+    <section class="auth-section" id="auth">
+        <h2 class="section-title">🚀 Ready to Get Started?</h2>
+        <p style="font-size: 1.2rem; margin-bottom: 2rem; color: var(--dark-brown);">
+            Join thousands of farmers who are already managing their farms efficiently with our system.
+        </p>
+        <div class="auth-buttons">
+            <a href="views/auth/register.php" class="btn btn-success btn-large">
+                <span>🌱</span>
+                <span>Create Your Account</span>
+            </a>
+            <a href="views/auth/login.php" class="btn btn-primary btn-large">
+                <span>🔑</span>
+                <span>Sign In to Existing Account</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Farm Management System. All rights reserved. | 🚜 Cultivating Digital Agriculture</p>
+        <p style="margin-top: 1rem; opacity: 0.8;">
+            Built with ❤️ for the farming community
+        </p>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add some interactive animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const featureCards = document.querySelectorAll('.feature-card');
+            featureCards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+
+            // Parallax effect for hero section
+            window.addEventListener('scroll', function() {
+                const scrolled = window.pageYOffset;
+                const hero = document.querySelector('.hero');
+                if (hero) {
+                    hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+                }
+            });
+        });
+    </script>
 </body>
 </html>
-HTML;
-    }
-}
-
-/**
- * Serve static assets
- */
-function serveStaticAsset($path) {
-    $assetPath = __DIR__ . '/public' . $path;
-    
-    if (file_exists($assetPath)) {
-        $mimeTypes = [
-            'css' => 'text/css',
-            'js' => 'application/javascript',
-            'png' => 'image/png',
-            'jpg' => 'image/jpeg',
-            'jpeg' => 'image/jpeg',
-            'gif' => 'image/gif',
-            'ico' => 'image/x-icon',
-            'svg' => 'image/svg+xml'
-        ];
-        
-        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
-        if (isset($mimeTypes[$extension])) {
-            header('Content-Type: ' . $mimeTypes[$extension]);
-        }
-        
-        readfile($assetPath);
-    } else {
-        http_response_code(404);
-        echo json_encode(['success' => false, 'message' => 'Asset not found']);
-    }
-}
-
-/**
- * Health check endpoint
- */
-function healthCheck() {
-    $status = [
-        'success' => true,
-        'message' => 'System is healthy',
-        'timestamp' => date('c'),
-        'version' => '1.0.0',
-        'environment' => getenv('APP_ENV') ?? 'production'
-    ];
-    
-    // Check database connection
-    try {
-        $database = new Database();
-        $conn = $database->getConnection();
-        $status['database'] = 'connected';
-    } catch (Exception $e) {
-        $status['database'] = 'disconnected';
-        $status['db_error'] = $e->getMessage();
-    }
-    
-    echo json_encode($status);
-}
-
-/**
- * Database test endpoint
- */
-function testDatabase() {
-    try {
-        $database = new Database();
-        $conn = $database->getConnection();
-        
-        // Test basic query
-        $stmt = $conn->query("SELECT 1 as test");
-        $result = $stmt->fetch();
-        
-        echo json_encode([
-            'success' => true,
-            'message' => 'Database connection successful',
-            'test_query' => $result
-        ]);
-    } catch (Exception $e) {
-        http_response_code(500);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Database connection failed',
-            'error' => $e->getMessage()
-        ]);
-    }
-}
-
-/**
- * Handle 404 Not Found
- */
-function handleNotFound($requestUri) {
-    if (isApiRequest()) {
-        http_response_code(404);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Endpoint not found: ' . $requestUri,
-            'available_endpoints' => [
-                '/api/register',
-                '/api/login', 
-                '/api/verify-2fa',
-                '/api/logout',
-                '/api/validate-token',
-                '/api/health'
-            ]
-        ]);
-    } else {
-        http_response_code(404);
-        header('Content-Type: text/html');
-        echo <<<HTML
-<!DOCTYPE html>
-<html>
-<head>
-    <title>404 - Page Not Found</title>
-    <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            text-align: center; 
-            padding: 50px;
-            background: #f0f0f0;
-        }
-        h1 { color: #d63031; }
-    </style>
-</head>
-<body>
-    <h1>404 - Page Not Found</h1>
-    <p>The requested page <strong>{$requestUri}</strong> was not found.</p>
-    <a href="/">← Back to Home</a>
-</body>
-</html>
-HTML;
-    }
-}
-
-/**
- * Check if request is an API request
- */
-function isApiRequest() {
-    return strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false ||
-           strpos($_SERVER['REQUEST_URI'] ?? '', '/api/') === 0 ||
-           ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_SERVER['HTTP_ACCEPT']));
-}
-
-?>
