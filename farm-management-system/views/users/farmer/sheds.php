@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../db.php';
+require_once '../../db.php';
 require_once '../../auth/check_role.php';
 check_role('farmer');
 
