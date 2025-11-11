@@ -26,7 +26,7 @@ date_default_timezone_set('UTC');
      *
      * This will create the 'vendor' folder and install all required packages.
      */
-require_once __DIR__ . '/config/Database.php';
+require_once __DIR__ . '/config/db.php';
 // Remove or adjust the namespace if Database.php does not declare it
 require_once __DIR__ . '/controllers/AuthController.php';
 use FarmManagement\Controllers\AuthController;
