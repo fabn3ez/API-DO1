@@ -352,7 +352,7 @@ $conn->close();
                     <span>🐄</span>
                     <span>Animals Management</span>
                 </div>
-                <a href="add_animal.php" class="btn btn-primary">
+                <a href="animal_add.php" class="btn btn-primary">
                     <span>➕</span>
                     <span>Add New Animal</span>
                 </a>
