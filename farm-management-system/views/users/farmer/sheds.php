@@ -1,14 +1,16 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'farmer') {
-    header('Location: ../../auth/login.php');
-    exit();
-}
-require_once __DIR__ . '/../../../config/db.php';
-$database = new Database();
-$conn = $database->getConnection();
+
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/API-DO1/farm-management-system/config/db.php';
 require_once '../../auth/check_role.php';
 check_role('farmer');
+
+
+$database = new Database();
+$conn = $database->getConnection();
+
+// Remove debug output for production
 
 $error = '';
 $success = '';
@@ -28,15 +30,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 INSERT INTO sheds (user_id, name, location, capacity, description, created_at) 
                 VALUES (?, ?, ?, ?, ?, NOW())
             ");
-            
+
             if ($insert_stmt->execute([$_SESSION['user_id'], $name, $location, $capacity, $description])) {
                 $success = "Shed added successfully!";
             } else {
                 $error = "Failed to add shed. Please try again.";
             }
         }
-    }
-    elseif (isset($_POST['edit_shed'])) {
+    } elseif (isset($_POST['edit_shed'])) {
         $shed_id = intval($_POST['shed_id']);
         $name = trim($_POST['name']);
         $location = trim($_POST['location']);
@@ -51,22 +52,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 SET name = ?, location = ?, capacity = ?, description = ?, updated_at = NOW() 
                 WHERE id = ? AND user_id = ?
             ");
-            
+
             if ($update_stmt->execute([$name, $location, $capacity, $description, $shed_id, $_SESSION['user_id']])) {
                 $success = "Shed updated successfully!";
             } else {
                 $error = "Failed to update shed. Please try again.";
             }
         }
-    }
-    elseif (isset($_POST['delete_shed'])) {
+    } elseif (isset($_POST['delete_shed'])) {
         $shed_id = intval($_POST['shed_id']);
-        
+
         // Check if shed has animals
-    $check_stmt = $conn->prepare("SELECT COUNT(*) FROM animals WHERE shed_id = ? AND user_id = ?");
+        $check_stmt = $conn->prepare("SELECT COUNT(*) FROM animals WHERE shed_id = ? AND user_id = ?");
         $check_stmt->execute([$shed_id, $_SESSION['user_id']]);
         $animal_count = $check_stmt->fetchColumn();
-        
+
         if ($animal_count > 0) {
             $error = "Cannot delete shed. There are animals assigned to this shed. Please reassign or remove the animals first.";
         } else {
@@ -107,64 +107,83 @@ $animals = $animals_stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shed Management - Farm Management System</title>
     <style>
-        body {
-            background: linear-gradient(135deg, #43ea5e 0%, #1b8a3c 100%);
-            color: #1b8a3c;
-            font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+        :root {
+            --forest-green: #228B22;
+            --earth-brown: #8B4513;
+            --sky-blue: #87CEEB;
+            --cream-white: #FFFDD0;
+            --wheat: #F5DEB3;
+            --dark-brown: #3E2723;
         }
+
+        body {
+            background-color: var(--cream-white);
+            color: var(--dark-brown);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         .container {
-            background: linear-gradient(135deg, #a67c52 0%, #eaffea 100%);
+            background: var(--wheat);
             border-radius: 16px;
-            box-shadow: 0 6px 32px rgba(67,234,94,0.12);
+            box-shadow: 0 6px 32px rgba(139, 69, 19, 0.12);
             padding: 40px 32px;
             margin: 60px auto 0 auto;
-            max-width: 700px;
+            max-width: 900px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+
         .main-content h1 {
-            color: #4e3b1f;
+            color: var(--forest-green);
             font-size: 2.2rem;
             margin-bottom: 22px;
             font-family: 'Poppins', serif;
             letter-spacing: 1px;
             text-align: center;
-            text-shadow: 0 2px 8px #eaffea, 0 1px 0 #a67c52;
+            text-shadow: 0 2px 8px var(--cream-white), 0 1px 0 var(--earth-brown);
         }
+
         .form-section {
-            background: #a67c52;
+            background: var(--earth-brown);
             border-radius: 10px;
             padding: 22px 18px;
             margin-bottom: 28px;
-            box-shadow: 0 2px 12px rgba(67,234,94,0.13);
+            box-shadow: 0 2px 12px rgba(139, 69, 19, 0.13);
         }
+
         .form-group label {
-            color: #fffbe6;
+            color: var(--cream-white);
             font-weight: 700;
             font-size: 1.05rem;
-            text-shadow: 0 1px 2px #4e3b1f;
+            text-shadow: 0 1px 2px var(--earth-brown);
         }
-        .shed-form input, .shed-form textarea {
-            background: #fffbe6;
-            border: 1.5px solid #a67c52;
+
+        .shed-form input,
+        .shed-form textarea {
+            background: var(--cream-white);
+            border: 1.5px solid var(--earth-brown);
             border-radius: 6px;
             padding: 12px;
             font-size: 1.05rem;
-            color: #4e3b1f;
+            color: var(--dark-brown);
             margin-bottom: 10px;
         }
-        .shed-form input:focus, .shed-form textarea:focus {
-            border-color: #43ea5e;
+
+        .shed-form input:focus,
+        .shed-form textarea:focus {
+            border-color: var(--forest-green);
             outline: none;
         }
+
         .btn-primary {
-            background: linear-gradient(90deg, #43ea5e 0%, #1b8a3c 100%);
+            background: linear-gradient(90deg, var(--forest-green) 0%, var(--earth-brown) 100%);
             color: #fff;
             border: none;
             border-radius: 6px;
@@ -173,105 +192,161 @@ $animals = $animals_stmt->fetchAll(PDO::FETCH_ASSOC);
             font-weight: 600;
             cursor: pointer;
             transition: background 0.2s;
-            box-shadow: 0 2px 8px rgba(67,234,94,0.08);
+            box-shadow: 0 2px 8px rgba(139, 69, 19, 0.08);
         }
+
         .btn-primary:hover {
-            background: linear-gradient(90deg, #1b8a3c 0%, #43ea5e 100%);
+            background: linear-gradient(90deg, var(--earth-brown) 0%, var(--forest-green) 100%);
         }
+
         .alert-error {
-            background: #eaffea;
-            color: #1b8a3c;
-            border-left: 5px solid #43ea5e;
+            background: var(--sky-blue);
+            color: var(--dark-brown);
+            border-left: 5px solid var(--forest-green);
             padding: 12px;
             margin-bottom: 16px;
             border-radius: 5px;
             font-size: 1rem;
         }
+
         .alert-success {
-            background: #43ea5e;
+            background: var(--forest-green);
             color: #fff;
-            border-left: 5px solid #1b8a3c;
+            border-left: 5px solid var(--earth-brown);
             padding: 12px;
             margin-bottom: 16px;
             border-radius: 5px;
             font-size: 1rem;
         }
+
         .content-header {
             margin-bottom: 28px;
         }
+
         .shed-management {
-            background: #eaffea;
+            background: #fff;
             border-radius: 10px;
             padding: 24px 18px;
-            box-shadow: 0 2px 8px rgba(67,234,94,0.10);
+            box-shadow: 0 2px 8px rgba(139, 69, 19, 0.10);
         }
+
         .shed-list {
             margin-top: 18px;
         }
+
         .shed-item {
-            background: #43ea5e;
+            background: var(--wheat);
             border-radius: 8px;
             padding: 16px;
             margin-bottom: 14px;
-            box-shadow: 0 1px 6px rgba(67,234,94,0.07);
+            box-shadow: 0 1px 6px rgba(139, 69, 19, 0.07);
             display: flex;
             flex-direction: column;
         }
+
         .shed-item h3 {
-            color: #1b8a3c;
+            color: var(--forest-green);
             margin-bottom: 6px;
             font-size: 1.15rem;
         }
+
         .shed-item p {
-            color: #fff;
+            color: var(--dark-brown);
             font-size: 1rem;
         }
+
         /* Farmer iconography */
         .farmer-icon {
             font-size: 2.2rem;
-            color: #43ea5e;
+            color: var(--forest-green);
             margin-right: 8px;
         }
+
         /* Edit Shed Modal */
         #editModal {
-            background: rgba(67,234,94,0.15);
+            background: rgba(139, 69, 19, 0.15);
         }
+
         #editModal .modal-content {
-            background: #eaffea;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(67,234,94,0.13);
-            padding: 32px 24px;
+            background: linear-gradient(120deg, var(--cream-white) 70%, var(--wheat) 100%);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(34, 139, 34, 0.15);
+            padding: 40px 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: none;
+            max-width: 420px;
+            margin: 0 auto;
         }
+
         #editModal label {
-            color: #1b8a3c;
-            font-weight: 700;
+            color: var(--forest-green);
+            font-weight: 600;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            letter-spacing: 0.5px;
+            font-size: 1.08rem;
+            margin-bottom: 6px;
         }
-        #editModal input, #editModal textarea {
-            background: #eaffea;
-            border: 1.5px solid #43ea5e;
-            border-radius: 6px;
-            padding: 12px;
-            font-size: 1.05rem;
-            color: #1b8a3c;
+
+        #editModal input,
+        #editModal textarea {
+            background: #fff;
+            border: 1.5px solid var(--forest-green);
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-size: 1.08rem;
+            color: var(--dark-brown);
+            margin-bottom: 18px;
+            width: 100%;
+            box-shadow: 0 2px 8px rgba(34, 139, 34, 0.08);
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-        #editModal input:focus, #editModal textarea:focus {
-            border-color: #1b8a3c;
+
+        #editModal input:focus,
+        #editModal textarea:focus {
+            border-color: var(--sky-blue);
             outline: none;
+            box-shadow: 0 0 0 2px var(--sky-blue);
         }
+
         #editModal .btn-primary {
-            background: linear-gradient(90deg, #43ea5e 0%, #1b8a3c 100%);
+            background: linear-gradient(90deg, var(--forest-green) 0%, var(--sky-blue) 100%);
             color: #fff;
+            border-radius: 8px;
+            font-weight: 600;
+            font-family: 'Segoe UI', 'Poppins', sans-serif;
+            box-shadow: 0 4px 16px rgba(34, 139, 34, 0.10);
+            margin-top: 10px;
+            padding: 14px 28px;
+            font-size: 1.08rem;
+            letter-spacing: 0.5px;
+            border: none;
+            transition: background 0.2s, box-shadow 0.2s;
         }
+
         #editModal .btn-primary:hover {
-            background: linear-gradient(90deg, #1b8a3c 0%, #43ea5e 100%);
+            background: linear-gradient(90deg, var(--sky-blue) 0%, var(--forest-green) 100%);
+            box-shadow: 0 6px 24px rgba(34, 139, 34, 0.18);
         }
     </style>
-    <!-- Removed inline earthy CSS for consistency. Use main style.css for unified look. -->
 </head>
+
 <body>
+    <div class="navbar">
+        <div class="nav-logo"><i class="fas fa-seedling"></i>Farm Management</div>
+        <div class="nav-links">
+            <a href="/API-DO1/farm-management-system/views/users/farmer/dashboard.php" class="nav-link">Dashboard</a>
+            <a href="/API-DO1/farm-management-system/views/users/farmer/sheds.php" class="nav-link active">Sheds</a>
+            <a href="/API-DO1/farm-management-system/views/users/farmer/animals.php" class="nav-link">Animals</a>
+            <a href="/API-DO1/farm-management-system/views/users/farmer/inventory.php" class="nav-link">Inventory</a>
+            <a href="/API-DO1/farm-management-system/views/users/farmer/reports.php" class="nav-link">Reports</a>
+            <a href="/API-DO1/farm-management-system/views/users/farmer/profile.php" class="nav-link">Profile</a>
+        </div>
+    </div>
     <div class="container">
-    <?php include __DIR__ . '/../../../includes/header.php'; ?>
-        
+        <?php include __DIR__ . '/../../../includes/header.php'; ?>
+
         <main class="main-content">
             <div class="content-header">
                 <h1><i class="fas fa-home"></i> Shed Management</h1>
@@ -280,7 +355,7 @@ $animals = $animals_stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php if ($error): ?>
                 <div class="alert alert-error"><?php echo $error; ?></div>
             <?php endif; ?>
-            
+
             <?php if ($success): ?>
                 <div class="alert alert-success"><?php echo $success; ?></div>
             <?php endif; ?>
@@ -309,7 +384,8 @@ $animals = $animals_stmt->fetchAll(PDO::FETCH_ASSOC);
 
                         <div class="form-group">
                             <label for="description">Description</label>
-                            <textarea id="description" name="description" rows="3" placeholder="Shed description..."></textarea>
+                            <textarea id="description" name="description" rows="3"
+                                placeholder="Shed description..."></textarea>
                         </div>
 
                         <div class="form-actions">
@@ -331,47 +407,48 @@ $animals = $animals_stmt->fetchAll(PDO::FETCH_ASSOC);
                     <?php else: ?>
                         <div class="sheds-grid">
                             <?php foreach ($sheds as $shed): ?>
-                            <div class="shed-card">
-                                <div class="shed-header">
-                                    <h3><?php echo htmlspecialchars($shed['name']); ?></h3>
-                                    <div class="shed-actions">
-                                        <button class="btn-icon edit-shed" data-shed='<?php echo json_encode($shed); ?>'>
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <form method="POST" style="display: inline;">
-                                            <input type="hidden" name="shed_id" value="<?php echo $shed['id']; ?>">
-                                            <button type="submit" name="delete_shed" class="btn-icon btn-danger" 
-                                                    onclick="return confirm('Are you sure you want to delete this shed?')">
-                                                <i class="fas fa-trash"></i>
+                                <div class="shed-card">
+                                    <div class="shed-header">
+                                        <h3><?php echo htmlspecialchars($shed['name']); ?></h3>
+                                        <div class="shed-actions">
+                                            <button class="btn-icon edit-shed" data-shed='<?php echo json_encode($shed); ?>'>
+                                                <i class="fas fa-edit"></i>
                                             </button>
-                                        </form>
+                                            <form method="POST" style="display: inline;">
+                                                <input type="hidden" name="shed_id" value="<?php echo $shed['id']; ?>">
+                                                <button type="submit" name="delete_shed" class="btn-icon btn-danger"
+                                                    onclick="return confirm('Are you sure you want to delete this shed?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="shed-info">
-                                    <?php if (!empty($shed['location'])): ?>
-                                        <p><i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($shed['location']); ?></p>
-                                    <?php endif; ?>
-                                    
-                                    <p><i class="fas fa-users"></i> 
-                                        <?php echo $shed['animal_count']; ?> / <?php echo $shed['capacity']; ?> animals
-                                        (<?php echo round(($shed['animal_count'] / $shed['capacity']) * 100); ?>% capacity)
-                                    </p>
-                                    
-                                    <?php if ($shed['critical_count'] > 0): ?>
-                                        <p class="critical-warning">
-                                            <i class="fas fa-exclamation-triangle"></i> 
-                                            <?php echo $shed['critical_count']; ?> animal(s) in critical condition
+                                    <div class="shed-info">
+                                        <?php if (!empty($shed['location'])): ?>
+                                            <p><i class="fas fa-map-marker-alt"></i>
+                                                <?php echo htmlspecialchars($shed['location']); ?></p>
+                                        <?php endif; ?>
+
+                                        <p><i class="fas fa-users"></i>
+                                            <?php echo $shed['animal_count']; ?> / <?php echo $shed['capacity']; ?> animals
+                                            (<?php echo round(($shed['animal_count'] / $shed['capacity']) * 100); ?>% capacity)
                                         </p>
-                                    <?php endif; ?>
-                                    
-                                    <?php if (!empty($shed['description'])): ?>
-                                        <p><?php echo nl2br(htmlspecialchars($shed['description'])); ?></p>
-                                    <?php endif; ?>
-                                </div>
 
-                                <!-- Removed shed-footer navigation -->
-                            </div>
+                                        <?php if ($shed['critical_count'] > 0): ?>
+                                            <p class="critical-warning">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                <?php echo $shed['critical_count']; ?> animal(s) in critical condition
+                                            </p>
+                                        <?php endif; ?>
+
+                                        <?php if (!empty($shed['description'])): ?>
+                                            <p><?php echo nl2br(htmlspecialchars($shed['description'])); ?></p>
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <!-- Removed shed-footer navigation -->
+                                </div>
                             <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
@@ -389,23 +466,23 @@ $animals = $animals_stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
             <form method="POST" id="editShedForm">
                 <input type="hidden" name="shed_id" id="edit_shed_id">
-                <div class="modal-body">
-                    <div class="form-group">
+                <div class="modal-body" style="width:100%; display:flex; flex-direction:column; align-items:center;">
+                    <div class="form-group" style="width:100%; text-align:center;">
                         <label for="edit_name">Shed Name *</label>
                         <input type="text" id="edit_name" name="name" required>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" style="width:100%; text-align:center;">
                         <label for="edit_location">Location</label>
                         <input type="text" id="edit_location" name="location">
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" style="width:100%; text-align:center;">
                         <label for="edit_capacity">Capacity</label>
                         <input type="number" id="edit_capacity" name="capacity" min="1">
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" style="width:100%; text-align:center;">
                         <label for="edit_description">Description</label>
                         <textarea id="edit_description" name="description" rows="3"></textarea>
                     </div>
@@ -425,7 +502,7 @@ $animals = $animals_stmt->fetchAll(PDO::FETCH_ASSOC);
         const cancelBtn = document.getElementById('cancelEdit');
 
         editButtons.forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 const shed = JSON.parse(this.dataset.shed);
                 document.getElementById('edit_shed_id').value = shed.id;
                 document.getElementById('edit_name').value = shed.name;
@@ -451,4 +528,5 @@ $animals = $animals_stmt->fetchAll(PDO::FETCH_ASSOC);
         });
     </script>
 </body>
+
 </html>
