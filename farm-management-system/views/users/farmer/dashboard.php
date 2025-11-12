@@ -114,6 +114,7 @@ while($row = $monthly_revenue->fetch_assoc()) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -129,19 +130,20 @@ while($row = $monthly_revenue->fetch_assoc()) {
             --wheat: #F5DEB3;
             --dark-brown: #3E2723;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         body {
             background-color: var(--cream-white);
             color: var(--dark-brown);
         }
         
+        /* Header Styles */
         .header {
             background: linear-gradient(to right, var(--forest-green), var(--earth-brown));
             color: white;
@@ -149,9 +151,9 @@ while($row = $monthly_revenue->fetch_assoc()) {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
-        
+
         .logo {
             display: flex;
             align-items: center;
@@ -159,38 +161,40 @@ while($row = $monthly_revenue->fetch_assoc()) {
             font-size: 1.5rem;
             font-weight: bold;
         }
-        
+
         .user-menu {
             display: flex;
             align-items: center;
             gap: 15px;
         }
-        
+
         .logout-btn {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             padding: 8px 15px;
             border-radius: 20px;
             text-decoration: none;
             color: white;
             transition: all 0.3s ease;
         }
-        
+
         .logout-btn:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.3);
         }
         
+        /* Main Layout */
         .container {
             display: flex;
             min-height: calc(100vh - 80px);
         }
         
+        /* Sidebar Styles */
         .sidebar {
             width: 250px;
             background: var(--wheat);
             padding: 2rem 1rem;
             border-right: 3px solid var(--earth-brown);
         }
-        
+
         .nav-item {
             padding: 12px 15px;
             margin: 8px 0;
@@ -204,19 +208,21 @@ while($row = $monthly_revenue->fetch_assoc()) {
             text-decoration: none;
             color: var(--dark-brown);
         }
-        
-        .nav-item:hover, .nav-item.active {
+
+        .nav-item:hover,
+        .nav-item.active {
             background-color: var(--forest-green);
             color: white;
             transform: translateX(5px);
         }
         
+        /* Main Content */
         .main-content {
             flex: 1;
             padding: 2rem;
             background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.03"><text x="50" y="50" font-size="80" text-anchor="middle" dominant-baseline="middle">🌾</text></svg>');
         }
-        
+
         .welcome-banner {
             text-align: center;
             margin-bottom: 2rem;
@@ -224,62 +230,89 @@ while($row = $monthly_revenue->fetch_assoc()) {
             background: linear-gradient(135deg, var(--sky-blue), var(--forest-green));
             border-radius: 15px;
             color: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         
+        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
-        
+
         .stat-card {
             background: white;
             padding: 1.5rem;
             border-radius: 12px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             border-left: 5px solid var(--forest-green);
             transition: transform 0.3s ease;
         }
-        
+
         .stat-card:hover {
             transform: translateY(-5px);
         }
-        
+
         .stat-icon {
             font-size: 2.5rem;
             margin-bottom: 0.5rem;
         }
-        
+
         .stat-number {
             font-size: 2rem;
             font-weight: bold;
             color: var(--forest-green);
         }
-        
+
         .stat-label {
             color: var(--dark-brown);
             font-size: 0.9rem;
         }
         
-        .charts-grid {
+        /* Quick Actions */
+        .quick-actions {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
             margin-bottom: 2rem;
         }
+
+        .action-btn {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--dark-brown);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .action-btn:hover {
+            border-color: var(--forest-green);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
         
-        .chart-container {
+        /* Recent Animals */
+        .recent-section {
             background: white;
             padding: 1.5rem;
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            position: relative;
+            margin-bottom: 2rem;
         }
         
-        .chart-title {
+        .section-title {
             margin-bottom: 1rem;
             color: var(--forest-green);
             display: flex;
@@ -289,84 +322,58 @@ while($row = $monthly_revenue->fetch_assoc()) {
             font-weight: 600;
         }
         
-        .chart-canvas {
-            width: 100% !important;
-            height: 250px !important;
+        .animals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
         }
         
-        .activity-feed {
-            background: white;
+        .animal-card {
+            background: var(--wheat);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--forest-green);
+        }
+        
+        .animal-type {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .animal-info {
+            font-size: 0.9rem;
+            color: var(--dark-brown);
+        }
+        
+        /* Health Alerts */
+        .alert-section {
+            background: #fff3cd;
             padding: 1.5rem;
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-left: 4px solid #ffc107;
         }
         
-        .activity-item {
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
+        .alert-title {
+            color: #856404;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            margin-bottom: 1rem;
         }
         
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-        
-        .activity-icon {
-            font-size: 1.2rem;
-            width: 30px;
-            text-align: center;
-        }
-        
-        .activity-content {
-            flex: 1;
-        }
-        
-        .activity-time {
-            color: #666;
-            font-size: 0.8rem;
-            margin-left: auto;
-        }
-        
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .action-btn {
+        .alert-item {
+            padding: 10px;
             background: white;
-            padding: 1rem;
-            border-radius: 10px;
-            text-align: center;
-            text-decoration: none;
-            color: var(--dark-brown);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-        
-        .action-btn:hover {
-            border-color: var(--forest-green);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        
-        .action-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-        
-        @media (max-width: 768px) {
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
+            margin: 5px 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
     </style>
 </head>
+
 <body>
     <!-- Header -->
     <div class="header">
@@ -389,13 +396,13 @@ while($row = $monthly_revenue->fetch_assoc()) {
                 <span>📊</span>
                 <span>Dashboard</span>
             </a>
-            <a href="animals.php" class="nav-item">
+            <!-- <a href="animals.php" class="nav-item">
                 <span>🐄</span>
-                <span>Animals Management</span>
+                <span>My Animals</span>
             </a>
-            <a href="inventory.php" class="nav-item">
-                <span>📦</span>
-                <span>Inventory</span>
+            <a href="add_animal.php" class="nav-item">
+                <span>➕</span>
+                <span>Add Animal</span>
             </a>
             <a href="financial.php" class="nav-item">
                 <span>💰</span>
@@ -483,19 +490,28 @@ while($row = $monthly_revenue->fetch_assoc()) {
                     </div>
                     <canvas class="chart-canvas" id="userChart"></canvas>
                 </div>
-                <div class="chart-container">
-                    <div class="chart-title">
-                        <span>💰</span>
-                        <span>REVENUE TREND (LAST 7 DAYS)</span>
+                <div class="animals-grid">
+                    <?php foreach($recent_animals as $animal): ?>
+                    <div class="animal-card">
+                        <div class="animal-type">
+                            <?php 
+                            $icons = [
+                                'Cow' => '🐄', 'Cattle' => '🐂', 'Hen' => '🐔', 'Cock' => '🐓',
+                                'Goat' => '🐐', 'Sheep' => '🐑', 'Rabbit' => '🐇', 'Horse' => '🐎',
+                                'Dog' => '🐕', 'Cat' => '🐈', 'Fish' => '🐟', 'Turkey' => '🦃',
+                                'Goose' => '🦆'
+                            ];
+                            echo $icons[$animal['type']] ?? '🐾';
+                            ?>
+                        </div>
+                        <div class="animal-info">
+                            <strong><?php echo $animal['type']; ?></strong><br>
+                            Breed: <?php echo $animal['breed']; ?><br>
+                            Count: <?php echo $animal['number']; ?><br>
+                            Shed: <?php echo $animal['shed_no']; ?>
+                        </div>
                     </div>
-                    <canvas class="chart-canvas" id="revenueChart"></canvas>
-                </div>
-                <div class="chart-container">
-                    <div class="chart-title">
-                        <span>📈</span>
-                        <span>MONTHLY REVENUE TREND</span>
-                    </div>
-                    <canvas class="chart-canvas" id="monthlyRevenueChart"></canvas>
+                    <?php endforeach; ?>
                 </div>
             </div>
 
@@ -533,132 +549,9 @@ while($row = $monthly_revenue->fetch_assoc()) {
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Animal Distribution Chart
-            const animalCtx = document.getElementById('animalChart').getContext('2d');
-            new Chart(animalCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: <?php echo json_encode($animal_labels); ?>,
-                    datasets: [{
-                        data: <?php echo json_encode($animal_data); ?>,
-                        backgroundColor: [
-                            '#228B22', '#8B4513', '#87CEEB', '#FFD700', '#FF6347', '#9370DB'
-                        ],
-                        borderWidth: 2,
-                        borderColor: '#fff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-
-            // User Roles Chart
-            const userCtx = document.getElementById('userChart').getContext('2d');
-            new Chart(userCtx, {
-                type: 'pie',
-                data: {
-                    labels: <?php echo json_encode($user_labels); ?>,
-                    datasets: [{
-                        data: <?php echo json_encode($user_data); ?>,
-                        backgroundColor: [
-                            '#228B22', '#8B4513', '#87CEEB', '#FFD700'
-                        ],
-                        borderWidth: 2,
-                        borderColor: '#fff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-
-            // Revenue Trend Chart
-            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-            new Chart(revenueCtx, {
-                type: 'line',
-                data: {
-                    labels: <?php echo json_encode($revenue_labels); ?>,
-                    datasets: [
-                        {
-                            label: 'Income',
-                            data: <?php echo json_encode($income_data); ?>,
-                            borderColor: '#228B22',
-                            backgroundColor: 'rgba(34, 139, 34, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        },
-                        {
-                            label: 'Expense',
-                            data: <?php echo json_encode($expense_data); ?>,
-                            borderColor: '#8B4513',
-                            backgroundColor: 'rgba(139, 69, 19, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-
-            // Monthly Revenue Chart
-            const monthlyCtx = document.getElementById('monthlyRevenueChart').getContext('2d');
-            new Chart(monthlyCtx, {
-                type: 'bar',
-                data: {
-                    labels: <?php echo json_encode($monthly_labels); ?>,
-                    datasets: [
-                        {
-                            label: 'Income',
-                            data: <?php echo json_encode($monthly_income); ?>,
-                            backgroundColor: 'rgba(34, 139, 34, 0.8)',
-                            borderColor: '#228B22',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Expense',
-                            data: <?php echo json_encode($monthly_expense); ?>,
-                            backgroundColor: 'rgba(139, 69, 19, 0.8)',
-                            borderColor: '#8B4513',
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-
-            // Navigation
             const navItems = document.querySelectorAll('.nav-item');
             navItems.forEach(item => {
-                item.addEventListener('click', function() {
+                item.addEventListener('click', function () {
                     navItems.forEach(nav => nav.classList.remove('active'));
                     this.classList.add('active');
                 });
@@ -666,4 +559,5 @@ while($row = $monthly_revenue->fetch_assoc()) {
         });
     </script>
 </body>
+
 </html>

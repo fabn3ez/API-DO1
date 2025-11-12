@@ -333,17 +333,7 @@ $animals = $animals_stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 
 <body>
-    <div class="navbar">
-        <div class="nav-logo"><i class="fas fa-seedling"></i>Farm Management</div>
-        <div class="nav-links">
-            <a href="/API-DO1/farm-management-system/views/users/farmer/dashboard.php" class="nav-link">Dashboard</a>
-            <a href="/API-DO1/farm-management-system/views/users/farmer/sheds.php" class="nav-link active">Sheds</a>
-            <a href="/API-DO1/farm-management-system/views/users/farmer/animals.php" class="nav-link">Animals</a>
-            <a href="/API-DO1/farm-management-system/views/users/farmer/inventory.php" class="nav-link">Inventory</a>
-            <a href="/API-DO1/farm-management-system/views/users/farmer/reports.php" class="nav-link">Reports</a>
-            <a href="/API-DO1/farm-management-system/views/users/farmer/profile.php" class="nav-link">Profile</a>
-        </div>
-    </div>
+    <!-- Top navigation bar removed as requested -->
     <div class="container">
         <?php include __DIR__ . '/../../../includes/header.php'; ?>
 
