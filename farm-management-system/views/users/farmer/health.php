@@ -362,10 +362,10 @@ $conn->close();
                 <span>📊</span>
                 <span>Dashboard</span>
             </a>
-            <a href="animals.php" class="nav-item">
+            <!-- <a href="animals.php" class="nav-item">
                 <span>🐄</span>
                 <span>My Animals</span>
-            </a>
+            </a> -->
             <a href="add_animal.php" class="nav-item">
                 <span>➕</span>
                 <span>Add Animal</span>

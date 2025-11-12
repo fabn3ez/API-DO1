@@ -45,7 +45,6 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -64,7 +63,7 @@ $conn->close();
             background: white;
             padding: 2rem;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             max-width: 800px;
             margin: 0 auto;
         }
@@ -228,7 +227,6 @@ $conn->close();
         }
     </style>
 </head>
-
 <body>
     <div class="container">
         <div class="main-content">
@@ -255,18 +253,9 @@ $conn->close();
                 <div class="animal-header">
                     <?php
                     $icons = [
-                        'Cow' => '🐄',
-                        'Cattle' => '🐂',
-                        'Hen' => '🐔',
-                        'Cock' => '🐓',
-                        'Goat' => '🐐',
-                        'Sheep' => '🐑',
-                        'Rabbit' => '🐇',
-                        'Horse' => '🐎',
-                        'Dog' => '🐕',
-                        'Cat' => '🐈',
-                        'Fish' => '🐟',
-                        'Turkey' => '🦃',
+                        'Cow' => '🐄', 'Cattle' => '🐂', 'Hen' => '🐔', 'Cock' => '🐓',
+                        'Goat' => '🐐', 'Sheep' => '🐑', 'Rabbit' => '🐇', 'Horse' => '🐎',
+                        'Dog' => '🐕', 'Cat' => '🐈', 'Fish' => '🐟', 'Turkey' => '🦃',
                         'Goose' => '🦆'
                     ];
                     $icon = $icons[$animal['type']] ?? '🐾';
@@ -343,7 +332,7 @@ $conn->close();
                         <div class="detail-item">
                             <div class="detail-label">Last Updated</div>
                             <div class="detail-value">
-                                <?php
+                                <?php 
                                 if (isset($animal['updated_at']) && $animal['updated_at'] !== null) {
                                     echo date('M j, Y g:i A', strtotime($animal['updated_at']));
                                 } else {
@@ -362,8 +351,7 @@ $conn->close();
                         <span>Additional Notes</span>
                     </div>
                     <?php if (!empty($animal['notes'])): ?>
-                        <div class="detail-value" style="line-height: 1.6; white-space: pre-wrap;">
-                            <?php echo htmlspecialchars($animal['notes']); ?></div>
+                        <div class="detail-value" style="line-height: 1.6; white-space: pre-wrap;"><?php echo htmlspecialchars($animal['notes']); ?></div>
                     <?php else: ?>
                         <div class="empty-notes">No additional notes provided for this animal group.</div>
                     <?php endif; ?>
@@ -371,12 +359,11 @@ $conn->close();
 
                 <!-- Creation Info -->
                 <div class="created-info">
-                    Record created on <?php echo date('F j, Y', strtotime($animal['created_at'])); ?>
+                    Record created on <?php echo date('F j, Y', strtotime($animal['created_at'])); ?> 
                     at <?php echo date('g:i A', strtotime($animal['created_at'])); ?>
                 </div>
             </div>
         </div>
     </div>
 </body>
-
 </html>
