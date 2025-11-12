@@ -1,4 +1,23 @@
 <?php
+// Show messages for add/delete actions
+$message = '';
+if (isset($_GET['user_added'])) {
+    $message = 'User added successfully!';
+}
+if (isset($_GET['deleted'])) {
+    $message = 'User deleted successfully!';
+}
+if (isset($_GET['error'])) {
+    $message = htmlspecialchars($_GET['error']);
+}
+?>
+
+<?php if ($message): ?>
+    <div class="message" style="margin:1rem auto;max-width:600px;text-align:center;color:#28a745;background:#eafbe7;padding:0.7rem 1rem;border-radius:5px;">
+        <?php echo $message; ?>
+    </div>
+<?php endif; ?>
+<?php
 session_start();
 require_once '../../auth/check_role.php';
 check_role('admin');
@@ -453,7 +472,6 @@ $conn->close();
             </a>
         </div>
 
-        <!-- Main Content -->
         <div class="main-content">
             <!-- Page Header -->
             <div class="page-header">
@@ -468,7 +486,7 @@ $conn->close();
             </div>
 
             <!-- Quick Actions -->
-            <div class="quick-actions">
+            <!-- <div class="quick-actions">
                 <a href="add_user.php" class="action-btn-large">
                     <span class="action-icon">👤</span>
                     <span>Add User</span>
@@ -485,7 +503,7 @@ $conn->close();
                     <span class="action-icon">📈</span>
                     <span>User Activity</span>
                 </a>
-            </div>
+            </div> -->
 
             <!-- Stats Grid -->
             <div class="stats-grid">
@@ -646,8 +664,8 @@ $conn->close();
                     </tbody>
                 </table>
             </div>
-
-            <!-- User Analytics -->
+<!-- 
+            User Analytics
             <div class="charts-grid">
                 <div class="chart-container">
                     <div class="chart-title">
@@ -693,7 +711,7 @@ $conn->close();
                 </div>
             </div>
         </div>
-    </div>
+    </div> 
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

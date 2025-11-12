@@ -20,14 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $number = intval($_POST['number']);
     $avg_weight = trim($_POST['avg_weight']);
     $shed_no = trim($_POST['shed_no']);
-    $notes = trim($_POST['notes']);
+    // $notes = trim($_POST['notes']);
 
     if (empty($type) || empty($breed) || empty($gender) || empty($number) || empty($avg_weight) || empty($shed_no)) {
         $message = 'Please fill in all required fields.';
         $message_type = 'error';
     } else {
-        $stmt = $conn->prepare("INSERT INTO animals (type, breed, gender, number, avg_weight, shed_no, notes) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssiss", $type, $breed, $gender, $number, $avg_weight, $shed_no, $notes);
+        $stmt = $conn->prepare("INSERT INTO animals (type, breed, gender, number, avg_weight, shed_no) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssiss", $type, $breed, $gender, $number, $avg_weight, $shed_no);
 
         if ($stmt->execute()) {
             $message = '✅ Animal added successfully!';
@@ -256,10 +256,10 @@ $conn->close();
                             required placeholder="e.g., Shed 1, Pond 2, Field A">
                     </div>
 
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label class="form-label">📝 Notes</label>
                         <textarea name="notes" class="form-control" placeholder="Any additional notes about these animals..."><?php echo isset($_POST['notes']) ? htmlspecialchars($_POST['notes']) : ''; ?></textarea>
-                    </div>
+                    </div> -->
 
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">
@@ -267,8 +267,16 @@ $conn->close();
                             <span>Save Animal</span>
                         </button>
                         <a href="animals_list.php" class="btn btn-secondary">
+                            <span>🐾</span>
+                            <span>Views Animals</span>
+                        </a>
+                        <!-- <a href="view_animals.php" class="btn btn-secondary">
+                            <span>🐾</span>
+                            <span>View Animals</span>
+                        </a> -->
+                        <a href="dashboard.php" class="btn btn-secondary">
                             <span>↩️</span>
-                            <span>Cancel</span>
+                            <span>Dashboard</span>
                         </a>
                     </div>
                 </form>

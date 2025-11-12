@@ -187,6 +187,9 @@ $conn->close();
                     <span>➕</span>
                     <span>Add New Animal</span>
                 </a>
+                <a href ="dashboard.php" class="btn btn-secondary">
+                    <span>🏠</span>
+                    <span>Dashboard</span>
             </div>
 
             <!-- Toolbar -->
@@ -260,7 +263,7 @@ $conn->close();
                                     <td><?php echo $animal['shed_no']; ?></td>
                                     <td class="action-buttons">
                                         <a href="animal_edit.php?id=<?php echo $animal['id']; ?>" class="action-btn edit-btn">✏️ Edit</a>
-                                        <a href="animal_view.php?id=<?php echo $animal['id']; ?>" class="action-btn view-btn">👁️ View</a>
+                                        <a href="view_animal.php?id=<?php echo $animal['id']; ?>" class="action-btn view-btn">👁️ View</a>
                                         <a href="delete_animal.php?id=<?php echo $animal['id']; ?>" class="action-btn delete-btn" onclick="return confirm('Delete this animal?')">🗑️ Delete</a>
                                     </td>
                                 </tr>

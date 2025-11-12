@@ -1,7 +1,30 @@
+
 <?php
 session_start();
 require_once '../../auth/check_role.php';
 check_role('admin');
+require_once __DIR__ . '/../../../database/Database.php';
+
+$db = new Database();
+$conn = $db->getConnection();
+
+// Fetch all reports with joined data
+$sql = "SELECT r.*, 
+    a.type AS animal_type, a.breed AS animal_breed, a.number AS animal_number, a.shed_no AS animal_shed,
+    u.username AS user_name, u.email AS user_email,
+    i.item_name AS inventory_item, i.quantity AS inventory_quantity,
+    t.amount AS transaction_amount, t.transaction_type AS transaction_type, t.created_at AS transaction_date,
+    s.total AS sales_total, s.created_at AS sales_date
+FROM reports r
+LEFT JOIN animals a ON r.animal_id = a.id
+LEFT JOIN users u ON r.user_id = u.id
+LEFT JOIN inventory i ON r.inventory_id = i.id
+LEFT JOIN transactions t ON r.transaction_id = t.id
+LEFT JOIN sales_orders s ON r.sales_order_id = s.id
+ORDER BY r.created_at DESC";
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$reports = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -242,7 +265,7 @@ check_role('admin');
                 <span>Settings</span>
             </a>
         </div>
-
+<!-- 
         <!-- Main Content -->
         <div class="main-content">
             <!-- Page Header -->
@@ -253,7 +276,7 @@ check_role('admin');
                 </div>
             </div>
 
-            <!-- Report Cards -->
+            <!-- Report Cards
             <div class="quick-actions">
                 <a href="animal_report.php" class="action-btn">
                     <span class="action-icon">🐄</span>
@@ -279,49 +302,78 @@ check_role('admin');
                     <span class="action-icon">🛒</span>
                     <span>Sales Report</span>
                 </a>
-            </div>
+            </div> -->
 
-            <!-- Charts Section -->
-            <div class="charts-grid">
-                <div class="chart-container">
-                    <div class="chart-title">
-                        <span>📈</span>
-                        <span>ANIMAL POPULATION TREND</span>
-                    </div>
-                    <div class="chart-placeholder">
-                        [Animal Population Chart]<br>
-                        Line chart showing population changes over time
-                    </div>
+
+            <!-- Reports Table Section -->
+            <div class="chart-container">
+                <div class="chart-title">
+                    <span>📄</span>
+                    <span>ALL REPORTS</span>
                 </div>
-                <div class="chart-container">
-                    <div class="chart-title">
-                        <span>💰</span>
-                        <span>REVENUE TREND</span>
-                    </div>
-                    <div class="chart-placeholder">
-                        [Revenue Trend Chart]<br>
-                        Bar chart showing monthly revenue
-                    </div>
-                </div>
-                <div class="chart-container">
-                    <div class="chart-title">
-                        <span>📦</span>
-                        <span>INVENTORY LEVELS</span>
-                    </div>
-                    <div class="chart-placeholder">
-                        [Inventory Chart]<br>
-                        Pie chart showing inventory distribution
-                    </div>
-                </div>
-                <div class="chart-container">
-                    <div class="chart-title">
-                        <span>👥</span>
-                        <span>USER ACTIVITY</span>
-                    </div>
-                    <div class="chart-placeholder">
-                        [User Activity Chart]<br>
-                        Heatmap showing user activity patterns
-                    </div>
+                <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse; margin-top:1rem;">
+                    <thead style="background:#f5f5f5;">
+                        <tr>
+                            <th>Report ID</th>
+                            <th>Date</th>
+                            <th>Animal</th>
+                            <th>User</th>
+                            <th>Inventory</th>
+                            <th>Transaction</th>
+                            <th>Sales Order</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($reports)): ?>
+                            <tr><td colspan="7" style="text-align:center; color:#888;">No reports found.</td></tr>
+                        <?php else: foreach ($reports as $report): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($report['report_id']); ?></td>
+                                <td><?php echo date('Y-m-d H:i', strtotime($report['created_at'])); ?></td>
+                                <td>
+                                    <?php if ($report['animal_id']): ?>
+                                        <strong>Type:</strong> <?php echo htmlspecialchars($report['animal_type']); ?><br>
+                                        <strong>Breed:</strong> <?php echo htmlspecialchars($report['animal_breed']); ?><br>
+                                        <strong>Number:</strong> <?php echo htmlspecialchars($report['animal_number']); ?><br>
+                                        <strong>Shed:</strong> <?php echo htmlspecialchars($report['animal_shed']); ?>
+                                    <?php else: ?>
+                                        -
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php if ($report['user_id']): ?>
+                                        <strong><?php echo htmlspecialchars($report['user_name']); ?></strong><br>
+                                        <?php echo htmlspecialchars($report['user_email']); ?>
+                                    <?php else: ?>-
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php if ($report['inventory_id']): ?>
+                                        <strong><?php echo htmlspecialchars($report['inventory_item']); ?></strong><br>
+                                        Qty: <?php echo htmlspecialchars($report['inventory_quantity']); ?>
+                                    <?php else: ?>-
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php if ($report['transaction_id']): ?>
+                                        <strong><?php echo htmlspecialchars($report['transaction_type']); ?></strong><br>
+                                        Amount: <?php echo htmlspecialchars($report['transaction_amount']); ?><br>
+                                        Date: <?php echo htmlspecialchars($report['transaction_date']); ?>
+                                    <?php else: ?>-
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php if ($report['sales_order_id']): ?>
+                                        Amount: <?php echo htmlspecialchars($report['sales_total']); ?><br>
+                                        Date: <?php echo htmlspecialchars($report['sales_date']); ?>
+                                    <?php else: ?>-
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; endif; ?>
+                    </tbody>
+                </table>
                 </div>
             </div>
 

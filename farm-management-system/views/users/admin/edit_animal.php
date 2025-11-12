@@ -321,7 +321,7 @@ $conn->close();
                             <span>↩️</span>
                             <span>Cancel</span>
                         </a>
-                        <a href="animal_view.php?id=<?php echo $animal['id']; ?>" class="btn" style="background: var(--sky-blue); color: white;">
+                        <a href="view_animal.php?id=<?php echo $animal['id']; ?>" class="btn" style="background: var(--sky-blue); color: white;">
                             <span>👁️</span>
                             <span>View</span>
                         </a>
