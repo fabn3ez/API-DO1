@@ -58,8 +58,18 @@ $stmt->close();
 $types_query = $conn->query("SELECT DISTINCT type FROM animals ORDER BY type");
 $unique_types = $types_query->fetch_all(MYSQLI_ASSOC);
 
-$breeds_query = $conn->query("SELECT DISTINCT breed FROM animals ORDER BY breed");
-$unique_breeds = $breeds_query->fetch_all(MYSQLI_ASSOC);
+
+if (!empty($type_filter)) {
+    $breeds_query = $conn->prepare("SELECT DISTINCT breed FROM animals WHERE type = ? ORDER BY breed");
+    $breeds_query->bind_param("s", $type_filter);
+    $breeds_query->execute();
+    $result = $breeds_query->get_result();
+    $unique_breeds = $result->fetch_all(MYSQLI_ASSOC);
+    $breeds_query->close();
+} else {
+    $breeds_query = $conn->query("SELECT DISTINCT breed FROM animals ORDER BY breed");
+    $unique_breeds = $breeds_query->fetch_all(MYSQLI_ASSOC);
+}
 
 $conn->close();
 ?>

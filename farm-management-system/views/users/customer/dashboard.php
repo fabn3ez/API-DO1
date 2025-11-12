@@ -342,7 +342,7 @@ $conn->close();
             <span>FARM MANAGEMENT SYSTEM</span>
         </div>
         <div class="user-menu">
-            <span>👋 Welcome, <?php echo $_SESSION['username']; ?> (Customer)</span>
+            <span>👋 Welcome, <?php echo $_SESSION['username']; ?> </span>
             <span>🔔</span>
             <a href="../../auth/logout.php" class="logout-btn">🚪 Logout</a>
         </div>
@@ -372,10 +372,10 @@ $conn->close();
                 <span>❤️</span>
                 <span>Wishlist</span>
             </a>
-            <a href="profile.php" class="nav-item">
+            <!-- <a href="profile.php" class="nav-item">
                 <span>👤</span>
                 <span>My Profile</span>
-            </a>
+            </a> -->
             <a href="support.php" class="nav-item">
                 <span>📞</span>
                 <span>Support</span>
@@ -407,10 +407,10 @@ $conn->close();
                     <span class="action-icon">🛒</span>
                     <span>Shopping Cart</span>
                 </a>
-                <a href="profile.php" class="action-btn">
+                <!-- <a href="profile.php" class="action-btn">
                     <span class="action-icon">👤</span>
                     <span>My Profile</span>
-                </a>
+                </a> -->
             </div>
 
             <!-- Stats Grid -->

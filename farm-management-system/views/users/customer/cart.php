@@ -27,17 +27,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     elseif (isset($_POST['remove_item'])) {
         $cart_item_id = intval($_POST['cart_item_id']);
-        
         $stmt = $conn->prepare("DELETE FROM cart_items WHERE id = ? AND user_id = ?");
         $stmt->bind_param("ii", $cart_item_id, $user_id);
         $stmt->execute();
         $stmt->close();
+        $_SESSION['cart_message'] = 'Item removed from cart.';
+        header('Location: cart.php');
+        exit;
     }
     elseif (isset($_POST['clear_cart'])) {
         $stmt = $conn->prepare("DELETE FROM cart_items WHERE user_id = ?");
         $stmt->bind_param("i", $user_id);
         $stmt->execute();
+        $cleared = $stmt->affected_rows > 0;
         $stmt->close();
+        if ($cleared) {
+            $_SESSION['cart_message'] = 'Your cart has been cleared.';
+            header('Location: cart.php');
+            exit;
+        }
     }
     elseif (isset($_POST['apply_coupon'])) {
         $coupon_code = trim($_POST['coupon_code']);
@@ -105,7 +113,7 @@ foreach ($cart_items as $item) {
     ]);
 }
 
-$shipping_fee = $subtotal > 0 ? 1000 : 0; // Example shipping fee
+$shipping_fee = $subtotal > 0 ? 200 : 0; // Example shipping fee
 $discount_amount = $_SESSION['discount_amount'] ?? 0;
 $total = $subtotal + $shipping_fee - $discount_amount;
 
@@ -632,6 +640,11 @@ $conn->close();
                 </a>
             </div>
 
+            <?php if (isset($_SESSION['cart_message'])): ?>
+                <div style="background:#e8f5e9;color:#2e7d32;padding:1em;border-radius:8px;margin-bottom:1em;text-align:center;font-weight:600;">
+                    <?php echo $_SESSION['cart_message']; unset($_SESSION['cart_message']); ?>
+                </div>
+            <?php endif; ?>
             <?php if (!empty($cart_items_with_prices)): ?>
             <div class="cart-layout">
                 <!-- Cart Items -->
@@ -672,37 +685,57 @@ $conn->close();
                             <div class="item-actions">
                                 <form method="POST" class="quantity-controls">
                                     <input type="hidden" name="cart_item_id" value="<?php echo $item['cart_item_id']; ?>">
+                                    <input type="hidden" name="update_quantity" value="1">
                                     <button type="button" class="quantity-btn minus" data-item="<?php echo $item['cart_item_id']; ?>">-</button>
-                                    <input type="number" name="quantity" value="<?php echo $item['quantity']; ?>" 
-                                           min="1" max="<?php echo $item['available_quantity']; ?>" 
-                                           class="quantity-input" data-item="<?php echo $item['cart_item_id']; ?>">
+                                    <input 
+                                        type="number" 
+                                        name="quantity" 
+                                        value="<?php echo $item['quantity']; ?>" 
+                                        min="1" 
+                                        max="<?php echo $item['available_quantity']; ?>" 
+                                        class="quantity-input" 
+                                        data-item="<?php echo $item['cart_item_id']; ?>"
+                                        data-price="<?php echo $item['price_per_unit']; ?>"
+                                        oninput="updateItemTotal(this); autoUpdateQuantity(this);"
+                                    >
+                                    <div style="margin-top:5px;font-size:0.95em;color:#8B4513;">
+                                        Total: KSh <span class="item-total" id="item-total-<?php echo $item['cart_item_id']; ?>">
+                                            <?php echo number_format($item['item_total'], 2); ?>
+                                        </span>
+                                    </div>
                                     <button type="button" class="quantity-btn plus" data-item="<?php echo $item['cart_item_id']; ?>">+</button>
-                                    <button type="submit" name="update_quantity" class="btn btn-secondary" style="padding: 8px 12px; margin-left: 10px;">
-                                        💾 Update
-                                    </button>
                                 </form>
-                                
-                                <form method="POST">
-                                    <input type="hidden" name="cart_item_id" value="<?php echo $item['cart_item_id']; ?>">
-                                    <button type="submit" name="remove_item" class="remove-btn" 
-                                            onclick="return confirm('Remove <?php echo $item['type']; ?> from cart?')">
-                                        🗑️ Remove
-                                    </button>
-                                </form>
+                                <script>
+                                    function updateItemTotal(input) {
+                                        const quantity = parseInt(input.value) || 1;
+                                        const price = parseFloat(input.dataset.price) || 0;
+                                        const total = quantity * price;
+                                        const totalSpan = document.getElementById('item-total-' + input.dataset.item);
+                                        if (totalSpan) {
+                                            totalSpan.textContent = total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+                                        }
+                                    }
+                                    function autoUpdateQuantity(input) {
+                                        clearTimeout(input._updateTimeout);
+                                        input._updateTimeout = setTimeout(function() {
+                                            input.form.submit();
+                                        }, 600);
+                                    }
+                                </script>
                             </div>
                         </div>
                         <?php endforeach; ?>
                         
                         <!-- Clear Cart Button -->
-                        <div class="cart-actions">
-                            <form method="POST">
-                                <button type="submit" name="clear_cart" class="btn btn-danger" 
-                                        onclick="return confirm('Are you sure you want to clear your entire cart?')">
-                                    🗑️ Clear Entire Cart
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+<div class="cart-actions">
+    <form method="POST">
+        <input type="hidden" name="clear_cart" value="1">
+        <button type="submit" class="btn btn-danger" 
+                onclick="return confirm('Are you sure you want to clear your entire cart?')">
+            🗑️ Clear Entire Cart
+        </button>
+    </form>
+</div>
                 </div>
                 
                 <!-- Order Summary -->
@@ -722,17 +755,6 @@ $conn->close();
                         <span class="summary-value">KSh <?php echo number_format($shipping_fee, 2); ?></span>
                     </div>
                     
-                    <?php if (isset($_SESSION['coupon_code'])): ?>
-                    <div class="summary-row">
-                        <span class="summary-label">
-                            Discount (<?php echo $_SESSION['coupon_code']; ?>)
-                            <form method="POST" style="display: inline;">
-                                <button type="submit" name="remove_coupon" class="btn" style="padding: 2px 6px; font-size: 0.7rem; background: #ff6b6b; color: white;">Remove</button>
-                            </form>
-                        </span>
-                        <span class="summary-value discount-amount">-KSh <?php echo number_format($discount_amount, 2); ?></span>
-                    </div>
-                    <?php endif; ?>
                     
                     <div class="summary-row summary-total">
                         <span>Total Amount</span>
@@ -790,53 +812,41 @@ $conn->close();
                 });
             });
 
-            // Quantity controls
+
+            // Quantity controls (plus/minus)
             document.querySelectorAll('.quantity-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const itemId = this.dataset.item;
                     const input = document.querySelector(`.quantity-input[data-item="${itemId}"]`);
                     let quantity = parseInt(input.value);
                     const max = parseInt(input.max);
-                    
                     if (this.classList.contains('plus') && quantity < max) {
                         quantity++;
                     } else if (this.classList.contains('minus') && quantity > 1) {
                         quantity--;
                     }
-                    
                     input.value = quantity;
-                    
-                    // Auto-update when using +/- buttons
-                    const form = input.closest('form');
-                    setTimeout(() => {
-                        form.submit();
-                    }, 500);
+                    updateItemTotal(input);
+                    input.form.submit();
                 });
             });
 
-            // Auto-update on quantity input change
-            document.querySelectorAll('.quantity-input').forEach(input => {
-                input.addEventListener('change', function() {
-                    const form = this.closest('form');
-                    form.submit();
-                });
-            });
-
-            // Show loading state on buttons
+            // Show loading state on buttons (except quantity forms)
             document.querySelectorAll('form').forEach(form => {
-                form.addEventListener('submit', function() {
-                    const submitBtn = this.querySelector('button[type="submit"]');
-                    if (submitBtn) {
-                        const originalText = submitBtn.innerHTML;
-                        submitBtn.innerHTML = '<span>⏳</span><span>Updating...</span>';
-                        submitBtn.disabled = true;
-                        
-                        setTimeout(() => {
-                            submitBtn.innerHTML = originalText;
-                            submitBtn.disabled = false;
-                        }, 2000);
-                    }
-                });
+                if (!form.classList.contains('quantity-controls')) {
+                    form.addEventListener('submit', function() {
+                        const submitBtn = this.querySelector('button[type="submit"]');
+                        if (submitBtn) {
+                            const originalText = submitBtn.innerHTML;
+                            submitBtn.innerHTML = '<span>⏳</span><span>Updating...</span>';
+                            submitBtn.disabled = true;
+                            setTimeout(() => {
+                                submitBtn.innerHTML = originalText;
+                                submitBtn.disabled = false;
+                            }, 2000);
+                        }
+                    });
+                }
             });
         });
     </script>
