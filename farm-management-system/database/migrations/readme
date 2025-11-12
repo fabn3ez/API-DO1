@@ -16,3 +16,8 @@ Use this instead this one;
  customer_wishlist.migration.php
  customer_reviews.migration.php
 
+#step 3: 
+products_and_sales_order_items.migration.php
+cart_items.migration.php
+sales_order_items.migration.php
+fix_sales_order_items_fk.migration

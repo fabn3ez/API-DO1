@@ -11,8 +11,9 @@ if ($mysqli->connect_error) {
 $mysqli->query("CREATE DATABASE IF NOT EXISTS farm");
 $mysqli->select_db("farm");
 
-// Create animals table
-$sql = "CREATE TABLE IF NOT EXISTS animals (
+// Drop and recreate animals table
+$mysqli->query("DROP TABLE IF EXISTS animals");
+$sql = "CREATE TABLE animals (
             id INT AUTO_INCREMENT PRIMARY KEY,
             type VARCHAR(255) NOT NULL,
             breed VARCHAR (255) NOT NULL,
@@ -20,6 +21,10 @@ $sql = "CREATE TABLE IF NOT EXISTS animals (
             number INT NOT NULL,
             avg_weight VARCHAR(255) NOT NULL,
             shed_no VARCHAR (255) NOT NULL,
+            shed_id INT NOT NULL,
+            tag_number VARCHAR(50) DEFAULT NULL,
+            name VARCHAR(100) DEFAULT NULL,
+            health_status VARCHAR(100) DEFAULT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )";
 if ($mysqli->query($sql) === TRUE) {
