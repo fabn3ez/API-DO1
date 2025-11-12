@@ -56,8 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = 'Please fill in all required fields.';
         $message_type = 'error';
     } else {
-    $stmt = $conn->prepare("UPDATE animals SET type=?, breed=?, gender=?, number=?, avg_weight=?, shed_no=? WHERE id=?");
-    $stmt->bind_param("sssissi", $type, $breed, $gender, $number, $avg_weight, $shed_no, $animal_id);
+        $stmt = $conn->prepare("UPDATE animals SET type=?, breed=?, gender=?, number=?, avg_weight=?, shed_no=? WHERE id=?");
+        $stmt->bind_param("sssissi", $type, $breed, $gender, $number, $avg_weight, $shed_no, $animal_id);
 
         if ($stmt->execute()) {
             $message = '✅ Animal updated successfully!';
@@ -81,6 +81,7 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -99,7 +100,7 @@ $conn->close();
             background: white;
             padding: 2rem;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             max-width: 600px;
             margin: 0 auto;
         }
@@ -227,6 +228,7 @@ $conn->close();
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="main-content">
@@ -239,9 +241,18 @@ $conn->close();
                 <div class="animal-header">
                     <?php
                     $icons = [
-                        'Cow' => '🐄', 'Cattle' => '🐂', 'Hen' => '🐔', 'Cock' => '🐓',
-                        'Goat' => '🐐', 'Sheep' => '🐑', 'Rabbit' => '🐇', 'Horse' => '🐎',
-                        'Dog' => '🐕', 'Cat' => '🐈', 'Fish' => '🐟', 'Turkey' => '🦃',
+                        'Cow' => '🐄',
+                        'Cattle' => '🐂',
+                        'Hen' => '🐔',
+                        'Cock' => '🐓',
+                        'Goat' => '🐐',
+                        'Sheep' => '🐑',
+                        'Rabbit' => '🐇',
+                        'Horse' => '🐎',
+                        'Dog' => '🐕',
+                        'Cat' => '🐈',
+                        'Fish' => '🐟',
+                        'Turkey' => '🦃',
                         'Goose' => '🦆'
                     ];
                     $icon = $icons[$animal['type']] ?? '🐾';
@@ -265,42 +276,50 @@ $conn->close();
                         <select name="type" class="form-control" required>
                             <option value="">Select Type</option>
                             <option value="Cow" <?php echo $animal['type'] === 'Cow' ? 'selected' : ''; ?>>Cow</option>
-                            <option value="Cattle" <?php echo $animal['type'] === 'Cattle' ? 'selected' : ''; ?>>Cattle</option>
+                            <option value="Cattle" <?php echo $animal['type'] === 'Cattle' ? 'selected' : ''; ?>>Cattle
+                            </option>
                             <option value="Hen" <?php echo $animal['type'] === 'Hen' ? 'selected' : ''; ?>>Hen</option>
                             <option value="Cock" <?php echo $animal['type'] === 'Cock' ? 'selected' : ''; ?>>Cock</option>
                             <option value="Goat" <?php echo $animal['type'] === 'Goat' ? 'selected' : ''; ?>>Goat</option>
-                            <option value="Sheep" <?php echo $animal['type'] === 'Sheep' ? 'selected' : ''; ?>>Sheep</option>
-                            <option value="Rabbit" <?php echo $animal['type'] === 'Rabbit' ? 'selected' : ''; ?>>Rabbit</option>
-                            <option value="Horse" <?php echo $animal['type'] === 'Horse' ? 'selected' : ''; ?>>Horse</option>
+                            <option value="Sheep" <?php echo $animal['type'] === 'Sheep' ? 'selected' : ''; ?>>Sheep
+                            </option>
+                            <option value="Rabbit" <?php echo $animal['type'] === 'Rabbit' ? 'selected' : ''; ?>>Rabbit
+                            </option>
+                            <option value="Horse" <?php echo $animal['type'] === 'Horse' ? 'selected' : ''; ?>>Horse
+                            </option>
                             <option value="Dog" <?php echo $animal['type'] === 'Dog' ? 'selected' : ''; ?>>Dog</option>
                             <option value="Cat" <?php echo $animal['type'] === 'Cat' ? 'selected' : ''; ?>>Cat</option>
                             <option value="Fish" <?php echo $animal['type'] === 'Fish' ? 'selected' : ''; ?>>Fish</option>
-                            <option value="Turkey" <?php echo $animal['type'] === 'Turkey' ? 'selected' : ''; ?>>Turkey</option>
-                            <option value="Goose" <?php echo $animal['type'] === 'Goose' ? 'selected' : ''; ?>>Goose</option>
+                            <option value="Turkey" <?php echo $animal['type'] === 'Turkey' ? 'selected' : ''; ?>>Turkey
+                            </option>
+                            <option value="Goose" <?php echo $animal['type'] === 'Goose' ? 'selected' : ''; ?>>Goose
+                            </option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label required">🏷️ Breed</label>
                         <input type="text" name="breed" class="form-control"
-                            value="<?php echo htmlspecialchars($animal['breed']); ?>"
-                            required placeholder="e.g., Jersey, Boer, Rhode Island Red">
+                            value="<?php echo htmlspecialchars($animal['breed']); ?>" required
+                            placeholder="e.g., Jersey, Boer, Rhode Island Red">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label required">⚧️ Gender</label>
                         <select name="gender" class="form-control" required>
                             <option value="">Select Gender</option>
-                            <option value="Male" <?php echo $animal['gender'] === 'Male' ? 'selected' : ''; ?>>Male</option>
-                            <option value="Female" <?php echo $animal['gender'] === 'Female' ? 'selected' : ''; ?>>Female</option>
-                            <option value="Mixed" <?php echo $animal['gender'] === 'Mixed' ? 'selected' : ''; ?>>Mixed</option>
+                            <option value="Male" <?php echo $animal['gender'] === 'Male' ? 'selected' : ''; ?>>Male
+                            </option>
+                            <option value="Female" <?php echo $animal['gender'] === 'Female' ? 'selected' : ''; ?>>Female
+                            </option>
+                            <option value="Mixed" <?php echo $animal['gender'] === 'Mixed' ? 'selected' : ''; ?>>Mixed
+                            </option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label required">🔢 Number of Animals</label>
-                        <input type="number" name="number" class="form-control"
-                            value="<?php echo $animal['number']; ?>"
+                        <input type="number" name="number" class="form-control" value="<?php echo $animal['number']; ?>"
                             required min="1" placeholder="e.g., 50">
                         <div class="form-help">Enter the total number of animals in this group</div>
                     </div>
@@ -308,21 +327,22 @@ $conn->close();
                     <div class="form-group">
                         <label class="form-label required">⚖️ Average Weight</label>
                         <input type="text" name="avg_weight" class="form-control"
-                            value="<?php echo htmlspecialchars($animal['avg_weight']); ?>"
-                            required placeholder="e.g., 450 kg, 2.5 kg">
+                            value="<?php echo htmlspecialchars($animal['avg_weight']); ?>" required
+                            placeholder="e.g., 450 kg, 2.5 kg">
                         <div class="form-help">Include units (kg, lbs, etc.)</div>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label required">🏠 Shed Number</label>
                         <input type="text" name="shed_no" class="form-control"
-                            value="<?php echo htmlspecialchars($animal['shed_no']); ?>"
-                            required placeholder="e.g., Shed 1, Pond 2, Field A">
+                            value="<?php echo htmlspecialchars($animal['shed_no']); ?>" required
+                            placeholder="e.g., Shed 1, Pond 2, Field A">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">📝 Notes</label>
-                        <textarea name="notes" class="form-control" placeholder="Any additional notes about these animals..."><?php echo htmlspecialchars($animal['notes'] ?? ''); ?></textarea>
+                        <textarea name="notes" class="form-control"
+                            placeholder="Any additional notes about these animals..."><?php echo htmlspecialchars($animal['notes'] ?? ''); ?></textarea>
                     </div>
 
                     <div class="form-actions">
@@ -334,7 +354,8 @@ $conn->close();
                             <span>↩️</span>
                             <span>Cancel</span>
                         </a>
-                        <a href="animal_view.php?id=<?php echo $animal['id']; ?>" class="btn" style="background: var(--sky-blue); color: white;">
+                        <a href="animal_view.php?id=<?php echo $animal['id']; ?>" class="btn"
+                            style="background: var(--sky-blue); color: white;">
                             <span>👁️</span>
                             <span>View</span>
                         </a>
@@ -344,4 +365,5 @@ $conn->close();
         </div>
     </div>
 </body>
+
 </html>
