@@ -64,89 +64,79 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Health Records - Farm Management System</title>
     <style>
-        /* Farm Theme Styles */
         :root {
-            --forest-green: #228B22;
-            --earth-brown: #8B4513;
-            --sky-blue: #87CEEB;
-            --cream-white: #FFFDD0;
-            --wheat: #F5DEB3;
-            --dark-brown: #3E2723;
+            --forest-green: #388e3c;
+            --earth-brown: #a67c52;
+            --sky-blue: #b7e4c7;
+            --cream-white: #f4ecd8;
+            --wheat: #eaffea;
+            --dark-brown: #4e3b1f;
             --health-red: #dc3545;
             --health-orange: #fd7e14;
-            --health-green: #28a745;
+            --health-green: #43ea5e;
         }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
         }
-        
         body {
-            background-color: var(--cream-white);
+            background: linear-gradient(135deg, var(--cream-white) 0%, var(--wheat) 100%);
             color: var(--dark-brown);
         }
-        
-        /* Header Styles */
         .header {
-            background: linear-gradient(to right, var(--forest-green), var(--earth-brown));
-            color: white;
-            padding: 1rem 2rem;
+            background: linear-gradient(90deg, var(--forest-green) 0%, var(--earth-brown) 100%);
+            color: #fffbe6;
+            padding: 1.2rem 2.2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 18px rgba(56,142,60,0.10);
+            border-radius: 0 0 18px 18px;
         }
-        
         .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 1.5rem;
+            gap: 12px;
+            font-size: 1.7rem;
             font-weight: bold;
+            color: var(--wheat);
+            text-shadow: 0 2px 8px var(--earth-brown);
         }
-        
         .user-menu {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 18px;
         }
-        
         .logout-btn {
-            background: rgba(255,255,255,0.2);
-            padding: 8px 15px;
+            background: var(--earth-brown);
+            padding: 8px 18px;
             border-radius: 20px;
             text-decoration: none;
-            color: white;
-            transition: all 0.3s ease;
+            color: #fffbe6;
+            font-weight: 600;
+            transition: background 0.3s ease;
         }
-        
         .logout-btn:hover {
-            background: rgba(255,255,255,0.3);
+            background: var(--forest-green);
         }
-        
-        /* Main Layout */
         .container {
             display: flex;
             min-height: calc(100vh - 80px);
         }
-        
-        /* Sidebar Styles */
         .sidebar {
             width: 250px;
             background: var(--wheat);
             padding: 2rem 1rem;
             border-right: 3px solid var(--earth-brown);
         }
-        
         .nav-item {
             padding: 12px 15px;
             margin: 8px 0;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: background 0.3s, color 0.3s, transform 0.3s;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -154,20 +144,16 @@ $conn->close();
             text-decoration: none;
             color: var(--dark-brown);
         }
-        
         .nav-item:hover, .nav-item.active {
             background-color: var(--forest-green);
-            color: white;
+            color: #fffbe6;
             transform: translateX(5px);
         }
-        
-        /* Main Content */
         .main-content {
             flex: 1;
-            padding: 2rem;
+            padding: 2.2rem;
             background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.03"><text x="50" y="50" font-size="80" text-anchor="middle" dominant-baseline="middle">❤️</text></svg>');
         }
-        
         .page-header {
             display: flex;
             justify-content: space-between;
@@ -176,233 +162,179 @@ $conn->close();
             padding-bottom: 1rem;
             border-bottom: 2px solid var(--forest-green);
         }
-        
         .page-title {
             color: var(--forest-green);
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 1.8rem;
+            font-size: 2rem;
+            font-weight: 700;
         }
-        
-        /* Health Actions */
         .health-actions {
             display: flex;
-            gap: 1rem;
+            gap: 1.2rem;
             margin-bottom: 2rem;
             flex-wrap: wrap;
         }
-        
         .action-btn {
-            padding: 10px 20px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: bold;
             display: flex;
             align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
+            gap: 10px;
+            transition: background 0.3s, box-shadow 0.3s, color 0.3s;
             text-decoration: none;
+            font-size: 1.05rem;
         }
-        
         .btn-primary {
-            background: var(--forest-green);
-            color: white;
+            background: linear-gradient(90deg, var(--forest-green) 0%, var(--earth-brown) 100%);
+            color: #fffbe6;
         }
-        
         .btn-secondary {
             background: var(--sky-blue);
             color: var(--dark-brown);
         }
-        
         .btn-danger {
             background: var(--health-red);
-            color: white;
+            color: #fffbe6;
         }
-        
         .action-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(56,142,60,0.13);
+            color: var(--forest-green);
         }
-        
-        /* Health Stats */
         .health-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.7rem;
             margin-bottom: 2rem;
         }
-        
         .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
+            background: #fffbe6;
+            padding: 1.7rem;
+            border-radius: 14px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
+            box-shadow: 0 4px 10px rgba(56,142,60,0.08);
+            transition: transform 0.3s;
         }
-        
         .stat-card:hover {
             transform: translateY(-5px);
         }
-        
         .stat-card.critical {
             border-left: 5px solid var(--health-red);
         }
-        
         .stat-card.warning {
             border-left: 5px solid var(--health-orange);
         }
-        
         .stat-card.good {
             border-left: 5px solid var(--health-green);
         }
-        
         .stat-card.info {
             border-left: 5px solid var(--sky-blue);
         }
-        
         .stat-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+            font-size: 2.7rem;
+            margin-bottom: 0.7rem;
         }
-        
         .stat-number {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: bold;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.7rem;
         }
-        
-        .stat-card.critical .stat-number {
-            color: var(--health-red);
-        }
-        
-        .stat-card.warning .stat-number {
-            color: var(--health-orange);
-        }
-        
-        .stat-card.good .stat-number {
-            color: var(--health-green);
-        }
-        
-        .stat-card.info .stat-number {
-            color: var(--sky-blue);
-        }
-        
         .stat-label {
             color: var(--dark-brown);
-            font-size: 0.9rem;
+            font-size: 1rem;
         }
-        
-        /* Health Tables */
         .health-section {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background: #fffbe6;
+            padding: 1.7rem;
+            border-radius: 14px;
+            box-shadow: 0 4px 10px rgba(56,142,60,0.08);
             margin-bottom: 2rem;
         }
-        
         .section-title {
             margin-bottom: 1rem;
             color: var(--forest-green);
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            font-size: 1.15rem;
+            font-weight: 700;
         }
-        
         .data-table {
             width: 100%;
             border-collapse: collapse;
         }
-        
         .data-table th {
             background: var(--forest-green);
-            color: white;
+            color: #fffbe6;
             padding: 15px;
             text-align: left;
         }
-        
         .data-table td {
             padding: 12px 15px;
             border-bottom: 1px solid #eee;
         }
-        
         .data-table tr:hover {
-            background: #f9f9f9;
+            background: var(--wheat);
         }
-        
-        /* Status Badges */
         .status-badge {
-            padding: 4px 8px;
+            padding: 4px 10px;
             border-radius: 12px;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             font-weight: bold;
         }
-        
         .status-healthy {
             background: #d4edda;
             color: #155724;
         }
-        
         .status-treatment {
             background: #fff3cd;
             color: #856404;
         }
-        
         .status-critical {
             background: #f8d7da;
             color: #721c24;
         }
-        
         .status-vaccinated {
             background: #d1ecf1;
             color: #0c5460;
         }
-        
-        /* Alert Styles */
         .alert-item {
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 8px;
+            padding: 14px;
+            margin: 10px 0;
+            border-radius: 10px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
-        
         .alert-critical {
             background: #f8d7da;
             border-left: 4px solid var(--health-red);
         }
-        
         .alert-warning {
             background: #fff3cd;
             border-left: 4px solid var(--health-orange);
         }
-        
         .alert-info {
             background: #d1ecf1;
             border-left: 4px solid var(--sky-blue);
         }
-        
-        /* Health Grid */
         .health-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.7rem;
             margin-bottom: 2rem;
         }
-        
         .health-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background: #fffbe6;
+            padding: 1.7rem;
+            border-radius: 14px;
+            box-shadow: 0 4px 10px rgba(56,142,60,0.08);
         }
-        
         .health-card .section-title {
             margin-bottom: 1rem;
         }
@@ -465,7 +397,7 @@ $conn->close();
                     <span>Animal Health Records</span>
                 </div>
                 <div class="health-actions">
-                    <a href="add_health_record.php" class="action-btn btn-primary">
+                    <a href="add_health.php" class="action-btn btn-primary">
                         <span>➕</span>
                         <span>Add Health Record</span>
                     </a>
