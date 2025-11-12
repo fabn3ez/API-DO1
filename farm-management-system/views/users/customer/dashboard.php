@@ -386,7 +386,7 @@ $conn->close();
         <div class="main-content">
             <!-- Welcome Banner -->
             <div class="welcome-banner">
-                <h1>🛒 WELCOME TO YOUR CUSTOMER DASHBOARD</h1>
+                <h1>🛒 WELCOME BACK, <?php echo htmlspecialchars($_SESSION['username']); ?></h1>
                 <p>Manage your purchases and farm animal orders</p>
                 <?php if ($customer): ?>
                 <p><strong>Customer Since:</strong> <?php echo date('F Y', strtotime($customer['customer_since'])); ?></p>
