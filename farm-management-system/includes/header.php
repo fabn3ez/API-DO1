@@ -1,10 +1,6 @@
 <?php
 // header.php - Admin Header
-session_start();
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
-    header('Location: ../auth/login.php');
-    exit();
-}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,87 +10,96 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
     <title>Admin - Farm Management System</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-        
-        .admin-header {
-            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-            color: white;
-            padding: 1rem 2rem;
+        /* HEADER SOFT GREEN FARMING THEME - v20251112 */
+        .admin-header-unique {
+            background: linear-gradient(90deg, #b7e4c7 0%, #81c784 100%);
+            color: #22543d;
+            padding: 0.8rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 18px rgba(129,199,132,0.10);
+            font-size: 1.08rem;
+            border-bottom: 2px solid #81c784;
+            border-radius: 0 0 18px 18px;
         }
-        
-        .logo-section {
+        .logo-section-unique {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 14px;
         }
-        
-        .logo-icon {
-            font-size: 1.8rem;
+        .logo-icon-unique {
+            font-size: 1.5rem;
+            color: #81c784;
+            filter: drop-shadow(0 2px 2px #b7e4c7);
         }
-        
-        .logo-text {
-            font-size: 1.4rem;
-            font-weight: 700;
+        .logo-text-unique {
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            color: #388e3c;
+            text-shadow: 0 2px 6px rgba(129,199,132,0.10);
         }
-        
-        .admin-menu {
+        .admin-menu-unique {
             display: flex;
             align-items: center;
             gap: 20px;
         }
-        
-        .menu-item {
+        .menu-item-unique {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 15px;
-            border-radius: 6px;
+            padding: 9px 16px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.2s ease, box-shadow 0.2s;
+            font-size: 1.08rem;
+            background: #eafaf1;
+            color: #22543d;
         }
-        
-        .menu-item:hover {
-            background-color: rgba(255,255,255,0.1);
+        .menu-item-unique:hover {
+            background-color: #b7e4c7;
+            color: #388e3c;
+            box-shadow: 0 2px 8px rgba(129,199,132,0.10);
         }
-        
-        .notification-badge {
-            background: #ff4444;
-            color: white;
+        .notification-badge-unique {
+            background: #81c784;
+            color: #fff;
             border-radius: 50%;
-            padding: 2px 6px;
+            padding: 3px 8px;
             font-size: 0.8rem;
-            margin-left: 5px;
+            margin-left: 4px;
+            font-weight: bold;
         }
+    </style>
+    </style>
+    </style>
+    </style>
+    </style>
+    </style>
     </style>
 </head>
 <body>
-    <header class="admin-header">
-        <div class="logo-section">
-            <div class="logo-icon">🌱</div>
-            <div class="logo-text">Farm Management System</div>
-            <div style="margin-left: 20px; font-size: 0.9rem; opacity: 0.9;">Admin Panel</div>
+    <header class="admin-header-unique">
+        <div class="logo-section-unique">
+            <div class="logo-icon-unique">�</div>
+            <div class="logo-text-unique">Farm Management System</div>
         </div>
-        
-        <div class="admin-menu">
-            <div class="menu-item">
+        <div class="admin-menu-unique">
+            <div class="menu-item-unique" onclick="window.location.href='/API-DO1/farm-management-system/views/users/farmer/dashboard.php'" style="cursor:pointer;">
+                <span>🏠</span>
+                <span>Back to Dashboard</span>
+            </div>
+            <div class="menu-item-unique" onclick="window.location.href='/API-DO1/farm-management-system/views/users/farmer/notifications.php'" style="cursor:pointer;">
                 <span>🔔</span>
                 <span>Notifications</span>
-                <span class="notification-badge">3</span>
+                <span class="notification-badge-unique">3</span>
             </div>
-            <div class="menu-item">
+            <div class="menu-item-unique" onclick="window.location.href='/API-DO1/farm-management-system/views/users/farmer/profile.php'" style="cursor:pointer;">
                 <span>👤</span>
                 <span><?php echo $_SESSION['username'] ?? 'Admin'; ?></span>
             </div>
-            <div class="menu-item" onclick="location.href='../auth/logout.php'">
+            <div class="menu-item-unique" onclick="window.location.href='/API-DO1/farm-management-system/views/users/auth/logout.php'" style="cursor:pointer;">
                 <span>🚪</span>
                 <span>Logout</span>
             </div>
