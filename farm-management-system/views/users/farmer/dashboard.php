@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once '../../auth/check_role.php';
-check_role('farmer');
+check_role('admin');
 
 // Database connection
 $host = 'localhost';
@@ -10,16 +10,106 @@ $db_pass = '1234';
 $db_name = 'farm';
 $conn = new mysqli($host, $db_user, $db_pass, $db_name);
 
-// Get farmer-specific stats
-$my_animals = $conn->query("SELECT SUM(number) as total FROM animals")->fetch_assoc()['total'];
-$animal_types = $conn->query("SELECT COUNT(DISTINCT type) as types FROM animals")->fetch_assoc()['types'];
-$total_sheds = $conn->query("SELECT COUNT(DISTINCT shed_no) as sheds FROM animals")->fetch_assoc()['sheds'];
-$recent_activities = $conn->query("SELECT COUNT(*) as count FROM animals WHERE DATE(created_at) = CURDATE()")->fetch_assoc()['count'];
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
-// Get farmer's recent animals
-$recent_animals = $conn->query("SELECT type, breed, number, shed_no FROM animals ORDER BY created_at DESC LIMIT 5")->fetch_all(MYSQLI_ASSOC);
+// Get admin stats
+$total_animals = $conn->query("SELECT SUM(number) as total FROM animals")->fetch_assoc()['total'] ?? 0;
+$total_users = $conn->query("SELECT COUNT(*) as count FROM users")->fetch_assoc()['count'] ?? 0;
+$pending_orders = $conn->query("SELECT COUNT(*) as count FROM sales_orders WHERE status='pending'")->fetch_assoc()['count'] ?? 0;
+$recent_transactions = $conn->query("SELECT COUNT(*) as count FROM transactions WHERE DATE(created_at) = CURDATE()")->fetch_assoc()['count'] ?? 0;
+
+// Get data for charts
+// Animal distribution by type
+$animal_distribution = $conn->query("
+    SELECT type, SUM(number) as total 
+    FROM animals 
+    GROUP BY type
+");
+
+// Revenue data (last 7 days)
+$revenue_data = $conn->query("
+    SELECT DATE(created_at) as date, 
+           SUM(CASE WHEN transaction_type = 'income' THEN amount ELSE 0 END) as income,
+           SUM(CASE WHEN transaction_type = 'expense' THEN amount ELSE 0 END) as expense
+    FROM transactions 
+    WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+    GROUP BY DATE(created_at)
+    ORDER BY date
+");
+
+// User roles distribution
+$user_roles = $conn->query("
+    SELECT role, COUNT(*) as count 
+    FROM users 
+    GROUP BY role
+");
+
+// Recent activities
+$recent_activities = $conn->query("
+    (SELECT 'animal' as type, CONCAT('Added ', number, ' ', breed, ' ', type, ' to Shed ', shed_no) as activity, created_at as timestamp
+     FROM animals 
+     ORDER BY created_at DESC LIMIT 3)
+    UNION ALL
+    (SELECT 'order' as type, CONCAT('New ', order_type, ' order from ', customer_supplier, ' - $', total) as activity, created_at as timestamp
+     FROM sales_orders 
+     ORDER BY created_at DESC LIMIT 3)
+    UNION ALL
+    (SELECT 'transaction' as type, CONCAT(transaction_type, ' of $', amount, ' - ', description) as activity, created_at as timestamp
+     FROM transactions 
+     ORDER BY created_at DESC LIMIT 3)
+    ORDER BY timestamp DESC 
+    LIMIT 5
+");
+
+// Monthly revenue trend
+$monthly_revenue = $conn->query("
+    SELECT 
+        DATE_FORMAT(created_at, '%Y-%m') as month,
+        SUM(CASE WHEN transaction_type = 'income' THEN amount ELSE 0 END) as income,
+        SUM(CASE WHEN transaction_type = 'expense' THEN amount ELSE 0 END) as expense
+    FROM transactions 
+    WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+    GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+    ORDER BY month
+");
 
 $conn->close();
+
+// Prepare chart data
+$animal_labels = [];
+$animal_data = [];
+while($row = $animal_distribution->fetch_assoc()) {
+    $animal_labels[] = $row['type'];
+    $animal_data[] = $row['total'];
+}
+
+$revenue_labels = [];
+$income_data = [];
+$expense_data = [];
+while($row = $revenue_data->fetch_assoc()) {
+    $revenue_labels[] = date('M j', strtotime($row['date']));
+    $income_data[] = floatval($row['income']);
+    $expense_data[] = floatval($row['expense']);
+}
+
+$user_labels = [];
+$user_data = [];
+while($row = $user_roles->fetch_assoc()) {
+    $user_labels[] = ucfirst($row['role']);
+    $user_data[] = $row['count'];
+}
+
+$monthly_labels = [];
+$monthly_income = [];
+$monthly_expense = [];
+while($row = $monthly_revenue->fetch_assoc()) {
+    $monthly_labels[] = date('M Y', strtotime($row['month']));
+    $monthly_income[] = floatval($row['income']);
+    $monthly_expense[] = floatval($row['expense']);
+}
 ?>
 
 <!DOCTYPE html>
@@ -27,9 +117,10 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farmer Dashboard - Farm Management System</title>
+    <title>Admin Dashboard - Farm Management System</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Farm Theme Styles */
+        /* Farm Theme Styles - Same as before */
         :root {
             --forest-green: #228B22;
             --earth-brown: #8B4513;
@@ -51,7 +142,6 @@ $conn->close();
             color: var(--dark-brown);
         }
         
-        /* Header Styles */
         .header {
             background: linear-gradient(to right, var(--forest-green), var(--earth-brown));
             color: white;
@@ -89,13 +179,11 @@ $conn->close();
             background: rgba(255,255,255,0.3);
         }
         
-        /* Main Layout */
         .container {
             display: flex;
             min-height: calc(100vh - 80px);
         }
         
-        /* Sidebar Styles */
         .sidebar {
             width: 250px;
             background: var(--wheat);
@@ -123,7 +211,6 @@ $conn->close();
             transform: translateX(5px);
         }
         
-        /* Main Content */
         .main-content {
             flex: 1;
             padding: 2rem;
@@ -140,7 +227,6 @@ $conn->close();
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         
-        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -178,7 +264,71 @@ $conn->close();
             font-size: 0.9rem;
         }
         
-        /* Quick Actions */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .chart-title {
+            margin-bottom: 1rem;
+            color: var(--forest-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .chart-canvas {
+            width: 100% !important;
+            height: 250px !important;
+        }
+        
+        .activity-feed {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .activity-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            font-size: 1.2rem;
+            width: 30px;
+            text-align: center;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-time {
+            color: #666;
+            font-size: 0.8rem;
+            margin-left: auto;
+        }
+        
         .quick-actions {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -210,73 +360,10 @@ $conn->close();
             display: block;
         }
         
-        /* Recent Animals */
-        .recent-section {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-        
-        .section-title {
-            margin-bottom: 1rem;
-            color: var(--forest-green);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-        
-        .animals-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-        
-        .animal-card {
-            background: var(--wheat);
-            padding: 1rem;
-            border-radius: 10px;
-            border-left: 4px solid var(--forest-green);
-        }
-        
-        .animal-type {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .animal-info {
-            font-size: 0.9rem;
-            color: var(--dark-brown);
-        }
-        
-        /* Health Alerts */
-        .alert-section {
-            background: #fff3cd;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            border-left: 4px solid #ffc107;
-        }
-        
-        .alert-title {
-            color: #856404;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 1rem;
-        }
-        
-        .alert-item {
-            padding: 10px;
-            background: white;
-            margin: 5px 0;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -288,7 +375,7 @@ $conn->close();
             <span>FARM MANAGEMENT SYSTEM</span>
         </div>
         <div class="user-menu">
-            <span>👋 Welcome, <?php echo $_SESSION['username']; ?> (Farmer)</span>
+            <span>👋 Welcome, <?php echo $_SESSION['username']; ?> (Admin)</span>
             <span>🔔</span>
             <a href="../../auth/logout.php" class="logout-btn">🚪 Logout</a>
         </div>
@@ -304,27 +391,27 @@ $conn->close();
             </a>
             <a href="animals.php" class="nav-item">
                 <span>🐄</span>
-                <span>My Animals</span>
+                <span>Animals Management</span>
             </a>
-            <a href="add_animal.php" class="nav-item">
-                <span>➕</span>
-                <span>Add Animal</span>
+            <a href="inventory.php" class="nav-item">
+                <span>📦</span>
+                <span>Inventory</span>
             </a>
-            <a href="health.php" class="nav-item">
-                <span>❤️</span>
-                <span>Health Records</span>
+            <a href="financial.php" class="nav-item">
+                <span>💰</span>
+                <span>Financial</span>
             </a>
-            <a href="sheds.php" class="nav-item">
-                <span>🏠</span>
-                <span>Shed Management</span>
+            <a href="users.php" class="nav-item">
+                <span>👥</span>
+                <span>User Management</span>
             </a>
             <a href="reports.php" class="nav-item">
                 <span>📈</span>
-                <span>Farm Reports</span>
+                <span>Reports</span>
             </a>
-            <a href="profile.php" class="nav-item">
-                <span>👤</span>
-                <span>My Profile</span>
+            <a href="settings.php" class="nav-item">
+                <span>⚙️</span>
+                <span>Settings</span>
             </a>
         </div>
 
@@ -332,27 +419,27 @@ $conn->close();
         <div class="main-content">
             <!-- Welcome Banner -->
             <div class="welcome-banner">
-                <h1>🌾 WELCOME TO YOUR FARM DASHBOARD 🌾</h1>
-                <p>Manage your animals and farm activities</p>
+                <h1>🌾 WELCOME TO FARM ADMIN DASHBOARD 🌾</h1>
+                <p>Manage your farm operations efficiently</p>
             </div>
 
             <!-- Quick Actions -->
             <div class="quick-actions">
-                <a href="add_animal.php" class="action-btn">
-                    <span class="action-icon">🐄</span>
-                    <span>Add New Animal</span>
-                </a>
                 <a href="animals.php" class="action-btn">
-                    <span class="action-icon">📋</span>
-                    <span>View All Animals</span>
+                    <span class="action-icon">🐄</span>
+                    <span>Manage Animals</span>
                 </a>
-                <a href="health.php" class="action-btn">
-                    <span class="action-icon">❤️</span>
-                    <span>Health Records</span>
+                <a href="users.php" class="action-btn">
+                    <span class="action-icon">👥</span>
+                    <span>Manage Users</span>
+                </a>
+                <a href="financial.php" class="action-btn">
+                    <span class="action-icon">💰</span>
+                    <span>View Financials</span>
                 </a>
                 <a href="reports.php" class="action-btn">
-                    <span class="action-icon">📊</span>
-                    <span>Generate Report</span>
+                    <span class="action-icon">📈</span>
+                    <span>Generate Reports</span>
                 </a>
             </div>
 
@@ -360,81 +447,215 @@ $conn->close();
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-icon">🐄</div>
-                    <div class="stat-number"><?php echo number_format($my_animals); ?></div>
+                    <div class="stat-number"><?php echo number_format($total_animals); ?></div>
                     <div class="stat-label">Total Animals</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">🐓</div>
-                    <div class="stat-number"><?php echo $animal_types; ?></div>
-                    <div class="stat-label">Animal Types</div>
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-number"><?php echo $total_users; ?></div>
+                    <div class="stat-label">Total Users</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">🏠</div>
-                    <div class="stat-number"><?php echo $total_sheds; ?></div>
-                    <div class="stat-label">Active Sheds</div>
+                    <div class="stat-icon">📋</div>
+                    <div class="stat-number"><?php echo $pending_orders; ?></div>
+                    <div class="stat-label">Pending Orders</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">📝</div>
-                    <div class="stat-number"><?php echo $recent_activities; ?></div>
-                    <div class="stat-label">Today's Activities</div>
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-number"><?php echo $recent_transactions; ?></div>
+                    <div class="stat-label">Today's Transactions</div>
                 </div>
             </div>
 
-            <!-- Recent Animals -->
-            <div class="recent-section">
-                <div class="section-title">
-                    <span>🐄</span>
-                    <span>RECENT ANIMALS</span>
-                </div>
-                <div class="animals-grid">
-                    <?php foreach($recent_animals as $animal): ?>
-                    <div class="animal-card">
-                        <div class="animal-type">
-                            <?php 
-                            $icons = [
-                                'Cow' => '🐄', 'Cattle' => '🐂', 'Hen' => '🐔', 'Cock' => '🐓',
-                                'Goat' => '🐐', 'Sheep' => '🐑', 'Rabbit' => '🐇', 'Horse' => '🐎',
-                                'Dog' => '🐕', 'Cat' => '🐈', 'Fish' => '🐟', 'Turkey' => '🦃',
-                                'Goose' => '🦆'
-                            ];
-                            echo $icons[$animal['type']] ?? '🐾';
-                            ?>
-                        </div>
-                        <div class="animal-info">
-                            <strong><?php echo $animal['type']; ?></strong><br>
-                            Breed: <?php echo $animal['breed']; ?><br>
-                            Count: <?php echo $animal['number']; ?><br>
-                            Shed: <?php echo $animal['shed_no']; ?>
-                        </div>
+            <!-- Charts Grid -->
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <div class="chart-title">
+                        <span>🗺️</span>
+                        <span>ANIMAL DISTRIBUTION</span>
                     </div>
-                    <?php endforeach; ?>
+                    <canvas class="chart-canvas" id="animalChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">
+                        <span>👥</span>
+                        <span>USER ROLES DISTRIBUTION</span>
+                    </div>
+                    <canvas class="chart-canvas" id="userChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">
+                        <span>💰</span>
+                        <span>REVENUE TREND (LAST 7 DAYS)</span>
+                    </div>
+                    <canvas class="chart-canvas" id="revenueChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">
+                        <span>📈</span>
+                        <span>MONTHLY REVENUE TREND</span>
+                    </div>
+                    <canvas class="chart-canvas" id="monthlyRevenueChart"></canvas>
                 </div>
             </div>
 
-            <!-- Health Alerts -->
-            <div class="alert-section">
-                <div class="alert-title">
-                    <span>⚠️</span>
-                    <span>HEALTH ALERTS & REMINDERS</span>
+            <!-- Activity Feed -->
+            <div class="activity-feed">
+                <div class="chart-title">
+                    <span>🌾</span>
+                    <span>RECENT FARM ACTIVITIES</span>
                 </div>
-                <div class="alert-item">
-                    <span>💉</span>
-                    <span>Vaccination due for Jersey cattle in Shed 5</span>
-                </div>
-                <div class="alert-item">
-                    <span>🌡️</span>
-                    <span>Temperature check needed for poultry in Shed 6</span>
-                </div>
-                <div class="alert-item">
-                    <span>🍽️</span>
-                    <span>Feed stock running low - reorder soon</span>
-                </div>
+                <?php if ($recent_activities && $recent_activities->num_rows > 0): ?>
+                    <?php while($activity = $recent_activities->fetch_assoc()): ?>
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <?php 
+                                switch($activity['type']) {
+                                    case 'animal': echo '🐄'; break;
+                                    case 'order': echo '📋'; break;
+                                    case 'transaction': echo '💰'; break;
+                                    default: echo '🌾';
+                                }
+                                ?>
+                            </div>
+                            <div class="activity-content"><?php echo htmlspecialchars($activity['activity']); ?></div>
+                            <div class="activity-time"><?php echo date('M j, g:i A', strtotime($activity['timestamp'])); ?></div>
+                        </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <div class="activity-item">
+                        <div class="activity-content">No recent activities found</div>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Animal Distribution Chart
+            const animalCtx = document.getElementById('animalChart').getContext('2d');
+            new Chart(animalCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: <?php echo json_encode($animal_labels); ?>,
+                    datasets: [{
+                        data: <?php echo json_encode($animal_data); ?>,
+                        backgroundColor: [
+                            '#228B22', '#8B4513', '#87CEEB', '#FFD700', '#FF6347', '#9370DB'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // User Roles Chart
+            const userCtx = document.getElementById('userChart').getContext('2d');
+            new Chart(userCtx, {
+                type: 'pie',
+                data: {
+                    labels: <?php echo json_encode($user_labels); ?>,
+                    datasets: [{
+                        data: <?php echo json_encode($user_data); ?>,
+                        backgroundColor: [
+                            '#228B22', '#8B4513', '#87CEEB', '#FFD700'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Revenue Trend Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: <?php echo json_encode($revenue_labels); ?>,
+                    datasets: [
+                        {
+                            label: 'Income',
+                            data: <?php echo json_encode($income_data); ?>,
+                            borderColor: '#228B22',
+                            backgroundColor: 'rgba(34, 139, 34, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Expense',
+                            data: <?php echo json_encode($expense_data); ?>,
+                            borderColor: '#8B4513',
+                            backgroundColor: 'rgba(139, 69, 19, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Monthly Revenue Chart
+            const monthlyCtx = document.getElementById('monthlyRevenueChart').getContext('2d');
+            new Chart(monthlyCtx, {
+                type: 'bar',
+                data: {
+                    labels: <?php echo json_encode($monthly_labels); ?>,
+                    datasets: [
+                        {
+                            label: 'Income',
+                            data: <?php echo json_encode($monthly_income); ?>,
+                            backgroundColor: 'rgba(34, 139, 34, 0.8)',
+                            borderColor: '#228B22',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Expense',
+                            data: <?php echo json_encode($monthly_expense); ?>,
+                            backgroundColor: 'rgba(139, 69, 19, 0.8)',
+                            borderColor: '#8B4513',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Navigation
             const navItems = document.querySelectorAll('.nav-item');
             navItems.forEach(item => {
                 item.addEventListener('click', function() {

@@ -226,9 +226,9 @@ $conn->close();
                         <span>Animal Details</span>
                     </div>
                     <div class="action-buttons">
-                        <a href="animal_edit.php?id=<?php echo $animal['id']; ?>" class="btn btn-edit">
+                        <a href="dashboard.php?id=<?php echo $animal['id']; ?>" class="btn btn-edit">
                             <span>✏️</span>
-                            <span>Edit</span>
+                            <span>Dashboard</span>
                         </a>
                         <a href="animals_list.php" class="btn btn-secondary">
                             <span>↩️</span>
