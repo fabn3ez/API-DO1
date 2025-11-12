@@ -1,6 +1,8 @@
 <?php
 session_start();
-require_once '../db.php';
+require_once __DIR__ . '/../../../config/db.php';
+$database = new Database();
+$pdo = $database->getConnection();
 require_once '../../auth/check_role.php';
 check_role('farmer');
 
@@ -87,14 +89,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['change_password'])) {
 }
 
 // Fetch farm statistics for dashboard
+
 $stats_stmt = $pdo->prepare("
     SELECT 
-        (SELECT COUNT(*) FROM animals WHERE user_id = ?) as total_animals,
-        (SELECT COUNT(*) FROM sheds WHERE user_id = ?) as total_sheds,
-        (SELECT COUNT(*) FROM inventory WHERE user_id = ?) as total_inventory,
-        (SELECT COUNT(*) FROM sales_orders WHERE user_id = ? AND status = 'completed') as total_orders
+        (SELECT COUNT(*) FROM animals) as total_animals,
+        (SELECT COUNT(*) FROM sheds) as total_sheds,
+        (SELECT COUNT(*) FROM inventory) as total_inventory,
+        (SELECT COUNT(*) FROM sales_orders WHERE status = 'completed') as total_orders
 ");
-$stats_stmt->execute([$_SESSION['user_id'], $_SESSION['user_id'], $_SESSION['user_id'], $_SESSION['user_id']]);
+$stats_stmt->execute();
 $farm_stats = $stats_stmt->fetch(PDO::FETCH_ASSOC);
 ?>
 
@@ -106,10 +109,128 @@ $farm_stats = $stats_stmt->fetch(PDO::FETCH_ASSOC);
     <title>My Profile - Farm Management System</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f4ecd8 0%, #eaffea 100%);
+            color: #4e3b1f;
+            font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+        }
+        .container {
+            background: linear-gradient(135deg, #a67c52 0%, #eaffea 100%);
+            border-radius: 16px;
+            box-shadow: 0 6px 32px rgba(67,234,94,0.12);
+            padding: 40px 32px;
+            margin: 60px auto 0 auto;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .content-header h1 {
+            color: #388e3c;
+            font-size: 2rem;
+            margin-bottom: 22px;
+            font-family: 'Poppins', serif;
+            letter-spacing: 1px;
+            text-align: center;
+            text-shadow: 0 2px 8px #eaffea, 0 1px 0 #a67c52;
+        }
+        .profile-card {
+            background: #fffbe6;
+            border-radius: 14px;
+            box-shadow: 0 4px 10px rgba(56,142,60,0.08);
+            padding: 32px 24px;
+            margin-bottom: 32px;
+            width: 100%;
+            max-width: 600px;
+        }
+        .profile-card h2 {
+            color: #388e3c;
+            font-size: 1.3rem;
+            margin-bottom: 18px;
+            font-weight: 700;
+        }
+        .profile-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px 32px;
+            margin-bottom: 18px;
+        }
+        .profile-details label {
+            color: #a67c52;
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+        .profile-details span {
+            color: #388e3c;
+            font-size: 1.05rem;
+        }
+        .profile-form {
+            margin-top: 18px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        label {
+            color: #a67c52;
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+        input, select, textarea {
+            background: #fffbe6;
+            border: 1.5px solid #a67c52;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 1.05rem;
+            color: #4e3b1f;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #43ea5e;
+            outline: none;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #388e3c 0%, #a67c52 100%);
+            color: #fffbe6;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 22px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 2px 8px rgba(67,234,94,0.08);
+            margin-top: 10px;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #a67c52 0%, #388e3c 100%);
+        }
+        .alert-error {
+            background: #fbeee6;
+            color: #8d5524;
+            border-left: 5px solid #a67c52;
+            padding: 12px;
+            margin-bottom: 16px;
+            border-radius: 5px;
+            font-size: 1rem;
+            width: 100%;
+        }
+        .alert-success {
+            background: #eaffea;
+            color: #388e3c;
+            border-left: 5px solid #388e3c;
+            padding: 12px;
+            margin-bottom: 16px;
+            border-radius: 5px;
+            font-size: 1rem;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <?php include '../includes/header.php'; ?>
+    <?php include __DIR__ . '/../../../includes/header.php'; ?>
         
         <main class="main-content">
             <div class="content-header">
@@ -124,24 +245,26 @@ $farm_stats = $stats_stmt->fetch(PDO::FETCH_ASSOC);
                 <div class="alert alert-success"><?php echo $success; ?></div>
             <?php endif; ?>
 
-            <div class="profile-container">
-                <!-- Farm Statistics -->
-                <div class="stats-section">
-                    <h2><i class="fas fa-chart-line"></i> Farm Overview</h2>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon animals">
-                                <i class="fas fa-cow"></i>
-                            </div>
-                            <div class="stat-info">
-                                <h3><?php echo $farm_stats['total_animals']; ?></h3>
-                                <p>Animals</p>
-                            </div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-icon sheds">
-                                <i class="fas fa-home"></i>
+            <div class="profile-details">
+                <label>Member Since:</label>
+                <span><?php echo !empty($user['created_at']) ? date('M d, Y', strtotime($user['created_at'])) : 'Unknown'; ?></span>
+                <label>Last Updated:</label>
+                <span>
+                    <?php 
+                    $updated = (isset($user['updated_at']) && $user['updated_at'] !== null && $user['updated_at'] !== '' && $user['updated_at'] !== '0000-00-00 00:00:00');
+                    if ($updated) {
+                        $updated_at_val = $user['updated_at'];
+                        echo date('M d, Y h:i A', strtotime($updated_at_val));
+                    } else {
+                        echo 'Never';
+                    }
+                    ?>
+                </span>
+                <label>Role:</label>
+                <span><?php echo ucfirst($user['role']); ?></span>
+                <label>Account Status:</label>
+                <span><?php echo $user['active'] ? 'Active' : 'Inactive'; ?></span>
+            </div>
                             </div>
                             <div class="stat-info">
                                 <h3><?php echo $farm_stats['total_sheds']; ?></h3>
@@ -178,20 +301,20 @@ $farm_stats = $stats_stmt->fetch(PDO::FETCH_ASSOC);
                         <div class="form-grid">
                             <div class="form-group">
                                 <label for="first_name">First Name *</label>
-                                <input type="text" id="first_name" name="first_name" 
-                                       value="<?php echo htmlspecialchars($user['first_name']); ?>" required>
+                    <input type="text" id="first_name" name="first_name" 
+                        value="<?php echo htmlspecialchars($user['first_name'] ?? ''); ?>" required>
                             </div>
 
                             <div class="form-group">
                                 <label for="last_name">Last Name *</label>
-                                <input type="text" id="last_name" name="last_name" 
-                                       value="<?php echo htmlspecialchars($user['last_name']); ?>" required>
+                    <input type="text" id="last_name" name="last_name" 
+                        value="<?php echo htmlspecialchars($user['last_name'] ?? ''); ?>" required>
                             </div>
 
                             <div class="form-group">
                                 <label for="email">Email Address *</label>
-                                <input type="email" id="email" name="email" 
-                                       value="<?php echo htmlspecialchars($user['email']); ?>" required>
+                    <input type="email" id="email" name="email" 
+                        value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>" required>
                             </div>
 
                             <div class="form-group">
@@ -278,7 +401,15 @@ $farm_stats = $stats_stmt->fetch(PDO::FETCH_ASSOC);
                         </div>
                         <div class="detail-item">
                             <label>Last Updated:</label>
-                            <span><?php echo date('M j, Y g:i A', strtotime($user['updated_at'])); ?></span>
+                            <span>
+                                <?php
+                                if (isset($user['updated_at']) && $user['updated_at'] && $user['updated_at'] !== '0000-00-00 00:00:00') {
+                                    echo date('M j, Y g:i A', strtotime($user['updated_at']));
+                                } else {
+                                    echo 'Never';
+                                }
+                                ?>
+                            </span>
                         </div>
                         <div class="detail-item">
                             <label>Role:</label>
@@ -294,7 +425,7 @@ $farm_stats = $stats_stmt->fetch(PDO::FETCH_ASSOC);
         </main>
     </div>
 
-    <?php include '../includes/footer.php'; ?>
+    <?php include __DIR__ . '/../../../includes/footer.php'; ?>
 
     <script>
         // Password strength indicator

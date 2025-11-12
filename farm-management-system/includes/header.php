@@ -99,7 +99,7 @@
                 <span>👤</span>
                 <span><?php echo $_SESSION['username'] ?? 'Admin'; ?></span>
             </div>
-            <div class="menu-item-unique" onclick="window.location.href='/API-DO1/farm-management-system/views/users/auth/logout.php'" style="cursor:pointer;">
+            <div class="menu-item-unique" onclick="window.location.href='/API-DO1/farm-management-system/views/users/farmer/logout.php'" style="cursor:pointer;">
                 <span>🚪</span>
                 <span>Logout</span>
             </div>
